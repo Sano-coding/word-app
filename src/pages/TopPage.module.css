@@ -1,0 +1,17 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 40px 0;
+}
