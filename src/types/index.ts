@@ -27,6 +27,8 @@ export interface Word {
   tanchouId: string
   word: string
   meaning: string
+  /** 補足。空文字列は「補足なし」を表す（任意項目） */
+  note: string
   masteryLevel: MasteryLevel
   flashcardStatus: StudyStatus
   quizStatus: StudyStatus
@@ -34,4 +36,4 @@ export interface Word {
   createdAt: string
 }
 
-export type NewWordInput = Pick<Word, 'word' | 'meaning'>
+export type NewWordInput = Pick<Word, 'word' | 'meaning'> & { note?: string }

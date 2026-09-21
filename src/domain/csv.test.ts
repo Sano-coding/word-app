@@ -8,6 +8,7 @@ function makeWord(partial: Partial<Word>): Word {
     tanchouId: 'tanchou-1',
     word: 'apple',
     meaning: 'りんご',
+    note: '',
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
@@ -50,10 +51,23 @@ describe('validateRows', () => {
       ['単語', '意味'],
       ['apple', 'りんご'],
       ['', '意味だけ'],
-      ['word', 'meaning', 'extra'],
+      ['word', 'meaning', 'extra', 'too-many'],
     ])
-    expect(result.valid).toEqual([{ word: 'apple', meaning: 'りんご' }])
+    expect(result.valid).toEqual([{ word: 'apple', meaning: 'りんご', note: '' }])
     expect(result.errorRows).toHaveLength(2)
+  })
+
+  it('accepts an optional third column as note', () => {
+    const result = validateRows([
+      ['単語', '意味', '補足'],
+      ['apple', 'りんご', '赤い果物'],
+      ['banana', 'バナナ', ''],
+    ])
+    expect(result.valid).toEqual([
+      { word: 'apple', meaning: 'りんご', note: '赤い果物' },
+      { word: 'banana', meaning: 'バナナ', note: '' },
+    ])
+    expect(result.errorRows).toHaveLength(0)
   })
 })
 
@@ -62,22 +76,22 @@ describe('dedupePreview', () => {
     const existing = [makeWord({ word: 'apple', meaning: 'りんご(旧)' })]
     const result = dedupePreview(
       [
-        { word: 'apple', meaning: 'りんご(新)' },
-        { word: 'banana', meaning: 'バナナ' },
-        { word: 'banana', meaning: 'バナナ2' },
+        { word: 'apple', meaning: 'りんご(新)', note: '新しい補足' },
+        { word: 'banana', meaning: 'バナナ', note: '' },
+        { word: 'banana', meaning: 'バナナ2', note: '' },
       ],
       existing,
     )
-    expect(result.toCreate).toEqual([{ word: 'banana', meaning: 'バナナ2' }])
-    expect(result.toUpdate).toEqual([{ id: 'id-1', word: 'apple', meaning: 'りんご(新)' }])
+    expect(result.toCreate).toEqual([{ word: 'banana', meaning: 'バナナ2', note: '' }])
+    expect(result.toUpdate).toEqual([{ id: 'id-1', word: 'apple', meaning: 'りんご(新)', note: '新しい補足' }])
     expect(result.duplicateCount).toBe(2)
   })
 })
 
 describe('buildImportPlan', () => {
   const dedupeResult = {
-    toCreate: [{ word: 'banana', meaning: 'バナナ' }],
-    toUpdate: [{ id: 'id-1', word: 'apple', meaning: 'りんご(新)' }],
+    toCreate: [{ word: 'banana', meaning: 'バナナ', note: '' }],
+    toUpdate: [{ id: 'id-1', word: 'apple', meaning: 'りんご(新)', note: '新しい補足' }],
     duplicateCount: 1,
   }
 
@@ -88,10 +102,10 @@ describe('buildImportPlan', () => {
     })
   })
 
-  it('overwrite policy applies meaning updates', () => {
+  it('overwrite policy applies meaning and note updates', () => {
     expect(buildImportPlan(dedupeResult, 'overwrite')).toEqual({
       creates: dedupeResult.toCreate,
-      updates: [{ id: 'id-1', meaning: 'りんご(新)' }],
+      updates: [{ id: 'id-1', meaning: 'りんご(新)', note: '新しい補足' }],
     })
   })
 })

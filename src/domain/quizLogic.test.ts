@@ -8,6 +8,7 @@ function makeWord(id: string, word: string, meaning: string): Word {
     tanchouId: 'tanchou-1',
     word,
     meaning,
+    note: '',
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',

@@ -63,6 +63,11 @@
   cursor: pointer;
 }
 
+.noteCell {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
 .select {
   padding: 4px 6px;
   border-radius: 6px;

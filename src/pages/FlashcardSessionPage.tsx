@@ -85,6 +85,7 @@ export default function FlashcardSessionPage() {
         ) : (
           <div className={styles.back}>
             <span className={styles.meaning}>{currentWord.meaning}</span>
+            {currentWord.note && <span className={styles.note}>{currentWord.note}</span>}
             <span className={styles.currentLevel}>現在の定着度：{MASTERY_LEVEL_LABELS[currentWord.masteryLevel]}</span>
           </div>
         )}

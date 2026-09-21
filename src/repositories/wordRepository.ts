@@ -18,6 +18,7 @@ function createWordRecord(tanchouId: string, input: NewWordInput): Word {
     tanchouId,
     word: input.word,
     meaning: input.meaning,
+    note: input.note?.trim() ?? '',
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
@@ -46,6 +47,7 @@ export async function createWord(tanchouId: string, input: NewWordInput): Promis
 export interface WordUpdate {
   word?: string
   meaning?: string
+  note?: string
   masteryLevel?: MasteryLevel
   flashcardStatus?: StudyStatus
   quizStatus?: StudyStatus
@@ -74,14 +76,14 @@ export async function deleteWordsByTanchou(tanchouId: string): Promise<void> {
 
 export interface BulkImportPlan {
   creates: NewWordInput[]
-  updates: { id: string; meaning: string }[]
+  updates: { id: string; meaning: string; note: string }[]
 }
 
 export async function bulkImportWords(tanchouId: string, plan: BulkImportPlan): Promise<void> {
   const all = readAll()
   const updated = all.map((w) => {
     const match = plan.updates.find((u) => u.id === w.id)
-    return match ? { ...w, meaning: match.meaning } : w
+    return match ? { ...w, meaning: match.meaning, note: match.note } : w
   })
   const created = plan.creates.map((input) => createWordRecord(tanchouId, input))
   writeAll([...updated, ...created])

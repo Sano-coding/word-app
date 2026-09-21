@@ -61,7 +61,7 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
-          <p>「単語,意味」の2列・ヘッダー行ありのCSVファイルを選択してください</p>
+          <p>「単語,意味,補足」の2〜3列・ヘッダー行ありのCSVファイルを選択してください（補足列は省略可）</p>
           <input
             type="file"
             accept=".csv,text/csv"
@@ -97,7 +97,7 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
                   checked={policy === 'keep_existing'}
                   onChange={() => setPolicy('keep_existing')}
                 />
-                既存の意味をそのまま残す
+                既存の意味・補足をそのまま残す
               </label>
               <label className={styles.policyOption}>
                 <input
@@ -105,7 +105,7 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
                   checked={policy === 'overwrite'}
                   onChange={() => setPolicy('overwrite')}
                 />
-                インポートデータの意味で上書きする
+                インポートデータの意味・補足で上書きする
               </label>
             </fieldset>
           )}

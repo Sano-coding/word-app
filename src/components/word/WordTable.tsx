@@ -59,6 +59,7 @@ export function WordTable({ words, onUpdate, onEdit, onDelete }: WordTableProps)
             <tr>
               <th>単語</th>
               <th>意味</th>
+              <th>補足</th>
               <th>定着度</th>
               <th>フラッシュカード</th>
               <th>4択クイズ</th>

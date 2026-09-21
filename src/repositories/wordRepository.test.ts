@@ -11,6 +11,12 @@ describe('wordRepository', () => {
     expect(word.masteryLevel).toBe('not_memorized')
     expect(word.flashcardStatus).toBe('not_shown')
     expect(word.quizStatus).toBe('not_shown')
+    expect(word.note).toBe('')
+  })
+
+  it('creates a word with a note when provided, trimmed', async () => {
+    const word = await createWord('tanchou-1', { word: 'apple', meaning: 'りんご', note: '  赤い果物  ' })
+    expect(word.note).toBe('赤い果物')
   })
 
   it('lists only words belonging to the given tanchou, sorted by creation order', async () => {

@@ -70,7 +70,7 @@ export default function WordListPage() {
           onCheckDuplicate={(word) => words.find((w) => w.word === word)}
           onSubmit={async (input, overwriteId) => {
             if (overwriteId) {
-              await updateWord(overwriteId, { meaning: input.meaning })
+              await updateWord(overwriteId, { meaning: input.meaning, note: input.note })
             } else if (formState.mode === 'create') {
               await createWord(tanchouId, input)
             } else if (formState.word) {

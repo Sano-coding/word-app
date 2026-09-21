@@ -9,6 +9,7 @@ function makeWord(partial: Partial<Word>): Word {
     tanchouId: 'tanchou-1',
     word: partial.word ?? 'word',
     meaning: 'meaning',
+    note: '',
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',

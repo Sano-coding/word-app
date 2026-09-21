@@ -89,16 +89,16 @@ export function validateRows(rows: string[][]): ValidatedRows {
 
   dataRows.forEach((cols, index) => {
     const rowIndex = index + 2 // 1-indexed, +1 for header row
-    if (cols.length !== 2) {
-      errorRows.push({ rowIndex, reason: '列数が単語・意味の2列と一致しません' })
+    if (cols.length !== 2 && cols.length !== 3) {
+      errorRows.push({ rowIndex, reason: '列数が単語・意味（・補足）の形式と一致しません' })
       return
     }
-    const [word, meaning] = cols
+    const [word, meaning, note] = cols
     if (word.trim().length === 0 || meaning.trim().length === 0) {
       errorRows.push({ rowIndex, reason: '単語または意味が空です' })
       return
     }
-    valid.push({ word: word.trim(), meaning: meaning.trim() })
+    valid.push({ word: word.trim(), meaning: meaning.trim(), note: note?.trim() ?? '' })
   })
 
   return { valid, errorRows }
@@ -106,7 +106,7 @@ export function validateRows(rows: string[][]): ValidatedRows {
 
 export interface DedupeResult {
   toCreate: NewWordInput[]
-  toUpdate: { id: string; word: string; meaning: string }[]
+  toUpdate: { id: string; word: string; meaning: string; note: string }[]
   duplicateCount: number
 }
 
@@ -119,14 +119,14 @@ export function dedupePreview(valid: NewWordInput[], existingWords: Word[]): Ded
   }
 
   const toCreate: NewWordInput[] = []
-  const toUpdate: { id: string; word: string; meaning: string }[] = []
+  const toUpdate: { id: string; word: string; meaning: string; note: string }[] = []
   let existingDuplicateCount = 0
 
   for (const entry of dedupedByFile.values()) {
     const existing = existingWords.find((w) => w.word === entry.word)
     if (existing) {
       existingDuplicateCount += 1
-      toUpdate.push({ id: existing.id, word: entry.word, meaning: entry.meaning })
+      toUpdate.push({ id: existing.id, word: entry.word, meaning: entry.meaning, note: entry.note ?? '' })
     } else {
       toCreate.push(entry)
     }
@@ -139,13 +139,13 @@ export type DuplicatePolicy = 'keep_existing' | 'overwrite'
 
 export interface ImportPlan {
   creates: NewWordInput[]
-  updates: { id: string; meaning: string }[]
+  updates: { id: string; meaning: string; note: string }[]
 }
 
 export function buildImportPlan(dedupeResult: DedupeResult, policy: DuplicatePolicy): ImportPlan {
   const updates =
     policy === 'overwrite'
-      ? dedupeResult.toUpdate.map((u) => ({ id: u.id, meaning: u.meaning }))
+      ? dedupeResult.toUpdate.map((u) => ({ id: u.id, meaning: u.meaning, note: u.note }))
       : []
   return { creates: dedupeResult.toCreate, updates }
 }
