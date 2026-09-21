@@ -54,26 +54,28 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
       </Button>
       <h1 className={styles.title}>{mode === 'flashcard' ? 'フラッシュカード' : '4択クイズ'}の設定</h1>
 
-      <FilterControls
-        statusLabel={mode === 'flashcard' ? 'フラッシュカード出題状況' : '4択クイズ出題状況'}
-        masteryLevels={masteryLevels}
-        onMasteryLevelsChange={setMasteryLevels}
-        statuses={statuses}
-        onStatusesChange={setStatuses}
-        starredOnly={starredOnly}
-        onStarredOnlyChange={setStarredOnly}
-      />
-
       <div className={styles.row}>
         <span className={styles.label}>出題順</span>
-        <label className={styles.radioOption}>
-          <input type="radio" checked={order === 'registration'} onChange={() => setOrder('registration')} />
-          登録順
-        </label>
-        <label className={styles.radioOption}>
-          <input type="radio" checked={order === 'random'} onChange={() => setOrder('random')} />
-          ランダム
-        </label>
+        <div className={styles.orderIcons}>
+          <button
+            type="button"
+            className={`${styles.orderButton} ${order === 'registration' ? styles.orderButtonSelected : ''}`}
+            onClick={() => setOrder('registration')}
+            aria-pressed={order === 'registration'}
+          >
+            <span className={styles.orderIcon}>📋</span>
+            登録順
+          </button>
+          <button
+            type="button"
+            className={`${styles.orderButton} ${order === 'random' ? styles.orderButtonSelected : ''}`}
+            onClick={() => setOrder('random')}
+            aria-pressed={order === 'random'}
+          >
+            <span className={styles.orderIcon}>🔀</span>
+            ランダム
+          </button>
+        </div>
       </div>
 
       <label className={styles.row}>
@@ -96,9 +98,21 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
 
       {filteredCount === 0 && <p className={styles.hint}>対象となる単語がありません。絞り込み条件を見直してください。</p>}
 
-      <Button onClick={handleStart} disabled={filteredCount === 0}>
-        開始する
-      </Button>
+      <FilterControls
+        statusLabel={mode === 'flashcard' ? 'フラッシュカード出題状況' : '4択クイズ出題状況'}
+        masteryLevels={masteryLevels}
+        onMasteryLevelsChange={setMasteryLevels}
+        statuses={statuses}
+        onStatusesChange={setStatuses}
+        starredOnly={starredOnly}
+        onStarredOnlyChange={setStarredOnly}
+      />
+
+      <div className={styles.actions}>
+        <Button onClick={handleStart} disabled={filteredCount === 0}>
+          開始する
+        </Button>
+      </div>
     </div>
   )
 }
