@@ -6,6 +6,7 @@ import { IconPicker } from '@/components/account/IconPicker'
 import { useAccount } from '@/context/AccountContext'
 import { isValidNickname } from '@/domain/validation'
 import { updateAccount } from '@/repositories/accountRepository'
+import { StorageQuotaError } from '@/repositories/storage'
 import { routes } from '@/routes'
 import type { IconType } from '@/types'
 import styles from '../pages/AccountCreatePage.module.css'
@@ -17,6 +18,7 @@ export default function AccountSettingsPage() {
   const [iconType, setIconType] = useState<IconType>('default')
   const [iconValue, setIconValue] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     if (account) {
@@ -32,9 +34,15 @@ export default function AccountSettingsPage() {
     e.preventDefault()
     if (!nicknameValid || submitting) return
     setSubmitting(true)
-    await updateAccount({ nickname: nickname.trim(), iconType, iconValue })
-    await refreshAccount()
-    navigate(routes.top)
+    setSaveError(null)
+    try {
+      await updateAccount({ nickname: nickname.trim(), iconType, iconValue })
+      await refreshAccount()
+      navigate(routes.top)
+    } catch (err) {
+      setSaveError(err instanceof StorageQuotaError ? err.message : '保存に失敗しました。もう一度お試しください。')
+      setSubmitting(false)
+    }
   }
 
   if (!account) return null
@@ -70,6 +78,8 @@ export default function AccountSettingsPage() {
             }}
           />
         </div>
+
+        {saveError && <p className={styles.hint}>{saveError}</p>}
 
         <div style={{ display: 'flex', gap: 8 }}>
           <Button type="submit" disabled={!nicknameValid || submitting}>

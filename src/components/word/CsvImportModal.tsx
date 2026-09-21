@@ -4,6 +4,7 @@ import { Button } from '@/components/common/Button'
 import { Modal } from '@/components/common/Modal'
 import { buildImportPlan, dedupePreview, parseCsv, validateRows } from '@/domain/csv'
 import type { DedupeResult, DuplicatePolicy, CsvParseError, ImportPlan } from '@/domain/csv'
+import { StorageQuotaError } from '@/repositories/storage'
 import type { Word } from '@/types'
 import styles from './CsvImportModal.module.css'
 
@@ -42,9 +43,14 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
   async function handleCommit() {
     if (!dedupeResult) return
     setImporting(true)
-    await onImport(buildImportPlan(dedupeResult, policy))
-    setImporting(false)
-    onClose()
+    setReadError(null)
+    try {
+      await onImport(buildImportPlan(dedupeResult, policy))
+      onClose()
+    } catch (err) {
+      setReadError(err instanceof StorageQuotaError ? err.message : 'インポートに失敗しました。もう一度お試しください。')
+      setImporting(false)
+    }
   }
 
   return (
@@ -103,6 +109,8 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
               </label>
             </fieldset>
           )}
+
+          {readError && <p className={styles.error}>{readError}</p>}
 
           <div className={styles.actions}>
             <Button onClick={handleCommit} disabled={importing}>
