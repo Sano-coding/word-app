@@ -27,9 +27,15 @@ export function AppLayout() {
           </div>
 
           <div className={styles.stats}>
-            <span className={styles.statItem}>単語帳 {tanchouCount}冊</span>
+            <span className={styles.statItem} title="単語帳の数">
+              <span className={styles.statIcon}>📚</span>
+              {tanchouCount}冊
+            </span>
             <span className={styles.statDivider} />
-            <span className={styles.statItem}>単語 {wordCount}語</span>
+            <span className={styles.statItem} title="総登録単語数">
+              <span className={styles.statIcon}>🔤</span>
+              {wordCount}語
+            </span>
           </div>
         </header>
 

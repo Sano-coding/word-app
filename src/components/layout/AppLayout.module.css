@@ -49,10 +49,18 @@
 }
 
 .statItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-muted);
   white-space: nowrap;
+}
+
+.statIcon {
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .statDivider {
