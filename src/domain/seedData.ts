@@ -46,7 +46,7 @@ export const DEFAULT_TANCHOU_WORDS: NewWordInput[] = [
   { word: 'belong', meaning: '所属する（belong to ～：～に属する）', note: '動詞' },
   { word: 'borrow', meaning: '借りる', note: '動詞' },
   { word: 'bring', meaning: '持って来る', note: '動詞' },
-  { word: 'build', meaning: '建てつ造る', note: '動詞' },
+  { word: 'build', meaning: '建てる、造る', note: '動詞' },
   { word: 'cancel', meaning: '取り消す、キャンセルする', note: '動詞' },
   { word: 'carry', meaning: '運ぶ、持ち歩く', note: '動詞' },
   { word: 'catch', meaning: '捕まえる、（電車などに）間に合う', note: '動詞' },
