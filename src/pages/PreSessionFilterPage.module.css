@@ -1,0 +1,46 @@
+.title {
+  font-size: 1.2rem;
+  margin: 16px 0 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  min-width: 64px;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.numberInput {
+  width: 80px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  font-size: 0.95rem;
+}
+
+.count {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 16px 0;
+}
+
+.hint {
+  display: block;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
