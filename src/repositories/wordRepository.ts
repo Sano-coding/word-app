@@ -1,3 +1,4 @@
+import { notifyDataChanged } from './events'
 import { readStorage, writeStorage } from './storage'
 import type { MasteryLevel, NewWordInput, StudyStatus, Word } from '@/types'
 
@@ -37,6 +38,7 @@ export async function getWord(id: string): Promise<Word | null> {
 export async function createWord(tanchouId: string, input: NewWordInput): Promise<Word> {
   const word = createWordRecord(tanchouId, input)
   writeAll([...readAll(), word])
+  notifyDataChanged()
   return word
 }
 
@@ -61,6 +63,7 @@ export async function updateWord(id: string, patch: WordUpdate): Promise<Word> {
 
 export async function deleteWord(id: string): Promise<void> {
   writeAll(readAll().filter((w) => w.id !== id))
+  notifyDataChanged()
 }
 
 export async function deleteWordsByTanchou(tanchouId: string): Promise<void> {
@@ -80,4 +83,5 @@ export async function bulkImportWords(tanchouId: string, plan: BulkImportPlan): 
   })
   const created = plan.creates.map((input) => createWordRecord(tanchouId, input))
   writeAll([...updated, ...created])
+  notifyDataChanged()
 }

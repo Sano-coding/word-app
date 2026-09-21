@@ -1,3 +1,4 @@
+import { notifyDataChanged } from './events'
 import { readStorage, writeStorage } from './storage'
 import { deleteWordsByTanchou } from './wordRepository'
 import type { Tanchou } from '@/types'
@@ -31,6 +32,7 @@ export async function createTanchou(accountId: string, name: string): Promise<Ta
     visibility: 'private',
   }
   writeAll([...readAll(), tanchou])
+  notifyDataChanged()
   return tanchou
 }
 
@@ -48,4 +50,5 @@ export async function renameTanchou(id: string, name: string): Promise<Tanchou> 
 export async function deleteTanchou(id: string): Promise<void> {
   writeAll(readAll().filter((t) => t.id !== id))
   await deleteWordsByTanchou(id)
+  notifyDataChanged()
 }
