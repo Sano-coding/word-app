@@ -66,31 +66,33 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   }
 
   return (
-    <>
-      {isOpen && <div className={styles.overlay} onClick={onClose} />}
-      <nav className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+    <nav className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+      <div className={styles.header}>
         {account && (
           <div className={styles.identity}>
             <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={36} />
             <span className={styles.nickname}>{account.nickname}</span>
           </div>
         )}
+        <button type="button" className={styles.closeButton} onClick={onClose} aria-label="メニューを閉じる">
+          ✕
+        </button>
+      </div>
 
-        <ul className={styles.navList}>
-          {NAV_ITEMS.map((item) => (
-            <li key={item.key}>
-              <button
-                type="button"
-                className={`${styles.navItem} ${item.isActive(location.pathname) ? styles.active : ''}`}
-                onClick={() => handleNavigate(item.path)}
-              >
-                <span className={styles.icon}>{item.icon}</span>
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </>
+      <ul className={styles.navList}>
+        {NAV_ITEMS.map((item) => (
+          <li key={item.key}>
+            <button
+              type="button"
+              className={`${styles.navItem} ${item.isActive(location.pathname) ? styles.active : ''}`}
+              onClick={() => handleNavigate(item.path)}
+            >
+              <span className={styles.icon}>{item.icon}</span>
+              {item.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
   )
 }
