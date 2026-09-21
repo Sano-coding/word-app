@@ -28,6 +28,7 @@ export async function createTanchou(accountId: string, name: string): Promise<Ta
     id: crypto.randomUUID(),
     accountId,
     name,
+    isStarred: false,
     createdAt: new Date().toISOString(),
     visibility: 'private',
   }
@@ -43,6 +44,17 @@ export async function renameTanchou(id: string, name: string): Promise<Tanchou> 
     throw new Error('単語帳が見つかりません')
   }
   const updated: Tanchou = { ...target, name }
+  writeAll(all.map((t) => (t.id === id ? updated : t)))
+  return updated
+}
+
+export async function setTanchouStarred(id: string, isStarred: boolean): Promise<Tanchou> {
+  const all = readAll()
+  const target = all.find((t) => t.id === id)
+  if (!target) {
+    throw new Error('単語帳が見つかりません')
+  }
+  const updated: Tanchou = { ...target, isStarred }
   writeAll(all.map((t) => (t.id === id ? updated : t)))
   return updated
 }

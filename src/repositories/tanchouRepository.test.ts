@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createTanchou, deleteTanchou, listTanchous } from './tanchouRepository'
+import { createTanchou, deleteTanchou, listTanchous, setTanchouStarred } from './tanchouRepository'
 import { createWord, listWords } from './wordRepository'
 
 beforeEach(() => {
@@ -18,6 +18,15 @@ describe('tanchouRepository', () => {
   it('reserves visibility as private without exposing it for editing', async () => {
     const tanchou = await createTanchou('account-1', '単語帳A')
     expect(tanchou.visibility).toBe('private')
+  })
+
+  it('creates a tanchou with isStarred false by default, and can toggle it', async () => {
+    const tanchou = await createTanchou('account-1', '単語帳A')
+    expect(tanchou.isStarred).toBe(false)
+
+    const starred = await setTanchouStarred(tanchou.id, true)
+    expect(starred.isStarred).toBe(true)
+    expect(starred.name).toBe('単語帳A')
   })
 
   it('cascades delete to the words belonging to the tanchou', async () => {

@@ -13,6 +13,7 @@ export interface Tanchou {
   id: string
   accountId: string
   name: string
+  isStarred: boolean
   createdAt: string
   /** 将来の共有機能（全体公開／フレンド公開）を見据えた予約フィールド。現状は常に 'private' で、UI には一切出さない */
   visibility: 'private'

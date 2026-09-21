@@ -5,7 +5,7 @@ import { ConfirmDeleteDialog } from '@/components/tanchou/ConfirmDeleteDialog'
 import { TanchouCard } from '@/components/tanchou/TanchouCard'
 import { TanchouFormDialog } from '@/components/tanchou/TanchouFormDialog'
 import { useAccount } from '@/context/AccountContext'
-import { createTanchou, deleteTanchou, listTanchous, renameTanchou } from '@/repositories/tanchouRepository'
+import { createTanchou, deleteTanchou, listTanchous, renameTanchou, setTanchouStarred } from '@/repositories/tanchouRepository'
 import { listWords } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
 import type { Tanchou, Word } from '@/types'
@@ -50,7 +50,12 @@ export default function TopPage() {
           key={t.id}
           name={t.name}
           words={wordsByTanchou[t.id] ?? []}
+          isStarred={t.isStarred}
           onClick={() => navigate(routes.submenu(t.id))}
+          onToggleStar={async () => {
+            await setTanchouStarred(t.id, !t.isStarred)
+            await refresh()
+          }}
           onRename={() => setRenaming(t)}
           onDelete={() => setDeleting(t)}
         />

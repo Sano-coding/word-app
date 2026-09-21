@@ -1,15 +1,18 @@
+import { StarButton } from '@/components/session/StarButton'
 import type { Word } from '@/types'
 import styles from './TanchouCard.module.css'
 
 interface TanchouCardProps {
   name: string
   words: Word[]
+  isStarred: boolean
   onClick: () => void
+  onToggleStar: () => void
   onRename: () => void
   onDelete: () => void
 }
 
-export function TanchouCard({ name, words, onClick, onRename, onDelete }: TanchouCardProps) {
+export function TanchouCard({ name, words, isStarred, onClick, onToggleStar, onRename, onDelete }: TanchouCardProps) {
   const memorized = words.filter((w) => w.masteryLevel === 'memorized').length
   const partially = words.filter((w) => w.masteryLevel === 'partially_memorized').length
   const notMemorized = words.filter((w) => w.masteryLevel === 'not_memorized').length
@@ -26,6 +29,7 @@ export function TanchouCard({ name, words, onClick, onRename, onDelete }: Tancho
         )}
       </button>
       <div className={styles.actions}>
+        <StarButton isStarred={isStarred} onToggle={onToggleStar} />
         <button type="button" className={styles.actionButton} onClick={onRename} aria-label="名前を変更">
           編集
         </button>
