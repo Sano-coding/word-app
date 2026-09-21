@@ -66,9 +66,9 @@ export default function TopPage() {
           title="単語帳を作成"
           onClose={() => setCreating(false)}
           onSubmit={async (name) => {
-            await createTanchou(account.id, name)
+            const tanchou = await createTanchou(account.id, name)
             setCreating(false)
-            await refresh()
+            navigate(routes.wordList(tanchou.id), { state: { openCreateModal: true } })
           }}
         />
       )}

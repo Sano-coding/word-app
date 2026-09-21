@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { ConfirmDeleteDialog } from '@/components/tanchou/ConfirmDeleteDialog'
 import { CsvImportModal } from '@/components/word/CsvImportModal'
@@ -11,12 +11,19 @@ import { routes } from '@/routes'
 import type { Tanchou, Word } from '@/types'
 import styles from './WordListPage.module.css'
 
+interface WordListLocationState {
+  openCreateModal?: boolean
+}
+
 export default function WordListPage() {
   const { tanchouId } = useParams<{ tanchouId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const [tanchou, setTanchou] = useState<Tanchou | null>(null)
   const [words, setWords] = useState<Word[]>([])
-  const [formState, setFormState] = useState<{ mode: 'create' | 'edit'; word?: Word } | null>(null)
+  const [formState, setFormState] = useState<{ mode: 'create' | 'edit'; word?: Word } | null>(() =>
+    (location.state as WordListLocationState | null)?.openCreateModal ? { mode: 'create' } : null,
+  )
   const [deletingWord, setDeletingWord] = useState<Word | null>(null)
   const [importing, setImporting] = useState(false)
 
