@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AppHeader } from '@/components/layout/AppHeader'
 import { Button } from '@/components/common/Button'
 import { ConfirmDeleteDialog } from '@/components/tanchou/ConfirmDeleteDialog'
 import { TanchouCard } from '@/components/tanchou/TanchouCard'
@@ -37,8 +36,6 @@ export default function TopPage() {
 
   return (
     <div className="page">
-      <AppHeader />
-
       <div className={styles.headerRow}>
         <h1 className={styles.title}>単語帳</h1>
         <Button onClick={() => setCreating(true)}>+ 新規作成</Button>

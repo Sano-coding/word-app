@@ -1,0 +1,41 @@
+.shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
+.menuButton {
+  font-size: 1.3rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  line-height: 1.6;
+}
+
+.mobileTitle {
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .mobileBar {
+    display: none;
+  }
+}

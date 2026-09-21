@@ -2,6 +2,8 @@ export const routes = {
   create: '/create',
   top: '/',
   settings: '/settings',
+  flashcardHub: '/flashcards',
+  quizHub: '/quiz',
   submenu: (tanchouId: string) => `/tanchou/${tanchouId}`,
   wordList: (tanchouId: string) => `/tanchou/${tanchouId}/words`,
   flashcardFilter: (tanchouId: string) => `/tanchou/${tanchouId}/flashcard`,

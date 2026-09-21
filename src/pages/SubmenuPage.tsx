@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
+import { QUIZ_MIN_WORD_COUNT } from '@/domain/quizLogic'
 import { getTanchou } from '@/repositories/tanchouRepository'
 import { listWords } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
 import type { Tanchou, Word } from '@/types'
 import styles from './SubmenuPage.module.css'
-
-const QUIZ_MIN_WORDS = 4
 
 export default function SubmenuPage() {
   const { tanchouId } = useParams<{ tanchouId: string }>()
@@ -23,7 +22,7 @@ export default function SubmenuPage() {
 
   if (!tanchouId || !tanchou) return null
 
-  const quizAvailable = words.length >= QUIZ_MIN_WORDS
+  const quizAvailable = words.length >= QUIZ_MIN_WORD_COUNT
 
   return (
     <div className="page">
