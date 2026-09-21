@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
 import { StarButton } from '@/components/session/StarButton'
-import { MASTERY_LEVEL_LABELS } from '@/domain/labels'
+import { MASTERY_LEVEL_ICONS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
 import { applyQuizAnswer } from '@/domain/masteryLevel'
 import { evaluateQuizAnswer, generateChoices } from '@/domain/quizLogic'
 import type { QuizChoice } from '@/domain/quizLogic'
@@ -134,7 +134,9 @@ export default function QuizSessionPage() {
               </li>
             ))}
           </ul>
-          <p className={styles.updatedLevel}>更新後の定着度：{MASTERY_LEVEL_LABELS[lastResult.newMasteryLevel]}</p>
+          <p className={styles.updatedLevel}>
+            更新後の定着度：{MASTERY_LEVEL_ICONS[lastResult.newMasteryLevel]} {MASTERY_LEVEL_LABELS[lastResult.newMasteryLevel]}
+          </p>
           <Button onClick={handleNext}>{isLast ? '結果を見る' : '次の問題へ'}</Button>
         </div>
       )}

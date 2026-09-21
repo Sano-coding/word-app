@@ -7,9 +7,9 @@ export const MASTERY_LEVEL_LABELS: Record<MasteryLevel, string> = {
 }
 
 export const MASTERY_LEVEL_ICONS: Record<MasteryLevel, string> = {
-  not_memorized: '🔴',
-  partially_memorized: '🟡',
-  memorized: '🟢',
+  not_memorized: '😞',
+  partially_memorized: '😐',
+  memorized: '😀',
 }
 
 export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memorized', 'memorized']
