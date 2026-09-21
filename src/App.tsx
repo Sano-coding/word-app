@@ -5,8 +5,9 @@ import AccountCreatePage from '@/pages/AccountCreatePage'
 import AccountSettingsPage from '@/pages/AccountSettingsPage'
 import FlashcardEndPage from '@/pages/FlashcardEndPage'
 import FlashcardSessionPage from '@/pages/FlashcardSessionPage'
-import PlaceholderPage from '@/pages/PlaceholderPage'
 import PreSessionFilterPage from '@/pages/PreSessionFilterPage'
+import QuizSessionPage from '@/pages/QuizSessionPage'
+import QuizSummaryPage from '@/pages/QuizSummaryPage'
 import SubmenuPage from '@/pages/SubmenuPage'
 import TopPage from '@/pages/TopPage'
 import WordListPage from '@/pages/WordListPage'
@@ -41,7 +42,9 @@ function App() {
             <Route path={routePatterns.flashcardFilter} element={<PreSessionFilterPage mode="flashcard" />} />
             <Route path={routePatterns.flashcardSession} element={<FlashcardSessionPage />} />
             <Route path={routePatterns.flashcardEnd} element={<FlashcardEndPage />} />
-            <Route path={routePatterns.quizFilter} element={<PlaceholderPage label="4択クイズ" />} />
+            <Route path={routePatterns.quizFilter} element={<PreSessionFilterPage mode="quiz" />} />
+            <Route path={routePatterns.quizSession} element={<QuizSessionPage />} />
+            <Route path={routePatterns.quizSummary} element={<QuizSummaryPage />} />
             <Route path="*" element={<Navigate to={routes.top} replace />} />
           </Routes>
         </AccountGate>
