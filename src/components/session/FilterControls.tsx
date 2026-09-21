@@ -36,44 +36,52 @@ export function FilterControls({
     <div className={styles.wrap}>
       <fieldset className={styles.group}>
         <legend>定着度で絞り込み</legend>
-        {MASTERY_LEVELS.map((level) => (
-          <label key={level} className={styles.option}>
-            <input
-              type="checkbox"
-              checked={masteryLevels.includes(level)}
-              onChange={() => onMasteryLevelsChange(toggle(masteryLevels, level))}
-            />
-            <span className={styles.optionIcon}>{MASTERY_LEVEL_ICONS[level]}</span>
-            {MASTERY_LEVEL_LABELS[level]}
-          </label>
-        ))}
+        <div className={styles.optionRow}>
+          {MASTERY_LEVELS.map((level) => (
+            <button
+              key={level}
+              type="button"
+              className={`${styles.optionButton} ${masteryLevels.includes(level) ? styles.optionButtonSelected : ''}`}
+              onClick={() => onMasteryLevelsChange(toggle(masteryLevels, level))}
+              aria-pressed={masteryLevels.includes(level)}
+            >
+              <span className={styles.optionIcon}>{MASTERY_LEVEL_ICONS[level]}</span>
+              {MASTERY_LEVEL_LABELS[level]}
+            </button>
+          ))}
+        </div>
       </fieldset>
 
       <fieldset className={styles.group}>
         <legend>スターで絞り込み</legend>
-        <label className={styles.option}>
-          <input
-            type="checkbox"
-            checked={starredOnly}
-            onChange={(e) => onStarredOnlyChange(e.target.checked)}
-          />
-          <span className={styles.optionIcon}>{STARRED_ICON}</span>
-          スター付きのみ表示
-        </label>
+        <div className={styles.optionRow}>
+          <button
+            type="button"
+            className={`${styles.optionButton} ${starredOnly ? styles.optionButtonSelected : ''}`}
+            onClick={() => onStarredOnlyChange(!starredOnly)}
+            aria-pressed={starredOnly}
+          >
+            <span className={styles.optionIcon}>{STARRED_ICON}</span>
+            スター付きのみ表示
+          </button>
+        </div>
       </fieldset>
 
       <fieldset className={styles.group}>
         <legend>{statusLabel}で絞り込み</legend>
-        {STUDY_STATUSES.map((status) => (
-          <label key={status} className={styles.option}>
-            <input
-              type="checkbox"
-              checked={statuses.includes(status)}
-              onChange={() => onStatusesChange(toggle(statuses, status))}
-            />
-            {STUDY_STATUS_LABELS[status]}
-          </label>
-        ))}
+        <div className={styles.optionRow}>
+          {STUDY_STATUSES.map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={`${styles.optionButton} ${statuses.includes(status) ? styles.optionButtonSelected : ''}`}
+              onClick={() => onStatusesChange(toggle(statuses, status))}
+              aria-pressed={statuses.includes(status)}
+            >
+              {STUDY_STATUS_LABELS[status]}
+            </button>
+          ))}
+        </div>
       </fieldset>
     </div>
   )
