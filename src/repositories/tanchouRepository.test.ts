@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createTanchou, deleteTanchou, listTanchous, setTanchouStarred } from './tanchouRepository'
+import { DEFAULT_TANCHOU_NAME, DEFAULT_TANCHOU_WORDS } from '@/domain/seedData'
+import { createTanchou, deleteTanchou, listTanchous, seedDefaultTanchou, setTanchouStarred } from './tanchouRepository'
 import { createWord, listWords } from './wordRepository'
 
 beforeEach(() => {
@@ -37,5 +38,17 @@ describe('tanchouRepository', () => {
 
     expect(await listTanchous('account-1')).toHaveLength(0)
     expect(await listWords(tanchou.id)).toHaveLength(0)
+  })
+
+  it('seeds a default tanchou with all sample words', async () => {
+    await seedDefaultTanchou('account-1')
+
+    const list = await listTanchous('account-1')
+    expect(list).toHaveLength(1)
+    expect(list[0].name).toBe(DEFAULT_TANCHOU_NAME)
+
+    const words = await listWords(list[0].id)
+    expect(words).toHaveLength(DEFAULT_TANCHOU_WORDS.length)
+    expect(words.every((w) => w.masteryLevel === 'not_memorized')).toBe(true)
   })
 })

@@ -1,6 +1,7 @@
+import { DEFAULT_TANCHOU_NAME, DEFAULT_TANCHOU_WORDS } from '@/domain/seedData'
 import { notifyDataChanged } from './events'
 import { readStorage, writeStorage } from './storage'
-import { deleteWordsByTanchou } from './wordRepository'
+import { bulkImportWords, deleteWordsByTanchou } from './wordRepository'
 import type { Tanchou } from '@/types'
 
 const KEY = 'tanchous'
@@ -57,6 +58,12 @@ export async function setTanchouStarred(id: string, isStarred: boolean): Promise
   const updated: Tanchou = { ...target, isStarred }
   writeAll(all.map((t) => (t.id === id ? updated : t)))
   return updated
+}
+
+/** 新規アカウント作成時に、お試し・チュートリアル用の単語帳を自動生成する */
+export async function seedDefaultTanchou(accountId: string): Promise<void> {
+  const tanchou = await createTanchou(accountId, DEFAULT_TANCHOU_NAME)
+  await bulkImportWords(tanchou.id, { creates: DEFAULT_TANCHOU_WORDS, updates: [] })
 }
 
 export async function deleteTanchou(id: string): Promise<void> {

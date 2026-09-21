@@ -7,6 +7,7 @@ import { useAccount } from '@/context/AccountContext'
 import { isValidNickname } from '@/domain/validation'
 import { createAccount } from '@/repositories/accountRepository'
 import { StorageQuotaError } from '@/repositories/storage'
+import { seedDefaultTanchou } from '@/repositories/tanchouRepository'
 import { routes } from '@/routes'
 import type { IconType } from '@/types'
 import styles from './AccountCreatePage.module.css'
@@ -28,9 +29,10 @@ export default function AccountCreatePage() {
     setSubmitting(true)
     setSaveError(null)
     try {
-      await createAccount({ nickname: nickname.trim(), iconType, iconValue })
+      const account = await createAccount({ nickname: nickname.trim(), iconType, iconValue })
+      await seedDefaultTanchou(account.id)
       await refreshAccount()
-      navigate(routes.top, { replace: true })
+      navigate(routes.home, { replace: true })
     } catch (err) {
       setSaveError(err instanceof StorageQuotaError ? err.message : '保存に失敗しました。もう一度お試しください。')
       setSubmitting(false)
