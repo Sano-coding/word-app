@@ -10,6 +10,9 @@
 }
 
 .menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 18px;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
@@ -19,11 +22,18 @@
   font-weight: 600;
   cursor: pointer;
   text-align: left;
+  width: 100%;
 }
 
 .menuItem:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.menuIcon {
+  font-size: 1.3rem;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .hint {

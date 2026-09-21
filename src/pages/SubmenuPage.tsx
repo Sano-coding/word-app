@@ -33,10 +33,12 @@ export default function SubmenuPage() {
 
       <div className={styles.menu}>
         <button type="button" className={styles.menuItem} onClick={() => navigate(routes.wordList(tanchouId))}>
+          <span className={styles.menuIcon}>📋</span>
           単語リスト
         </button>
 
         <button type="button" className={styles.menuItem} onClick={() => navigate(routes.flashcardFilter(tanchouId))}>
+          <span className={styles.menuIcon}>🃏</span>
           フラッシュカード
         </button>
 
@@ -46,6 +48,7 @@ export default function SubmenuPage() {
           disabled={!quizAvailable}
           onClick={() => quizAvailable && navigate(routes.quizFilter(tanchouId))}
         >
+          <span className={styles.menuIcon}>❓</span>
           4択クイズ
         </button>
         {!quizAvailable && (
