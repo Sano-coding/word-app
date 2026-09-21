@@ -11,6 +11,7 @@ const TUTORIAL_ITEMS = [
   {
     icon: '📚',
     text: '「単語帳」から覚えたい単語とその意味を登録しよう！',
+    subText: '単語リストの単語を押すと意味と補足を編集できるよ',
     path: routes.top,
   },
   {
@@ -52,7 +53,10 @@ export default function HomePage() {
               onClick={() => navigate(item.path)}
             >
               <span className={styles.tutorialIcon}>{item.icon}</span>
-              <span>{item.text}</span>
+              <span className={styles.tutorialTextGroup}>
+                <span>{item.text}</span>
+                {item.subText && <span className={styles.tutorialSubText}>{item.subText}</span>}
+              </span>
             </button>
           ))}
         </div>

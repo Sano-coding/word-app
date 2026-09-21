@@ -53,3 +53,15 @@
   line-height: 1;
   flex-shrink: 0;
 }
+
+.tutorialTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tutorialSubText {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
