@@ -1,4 +1,11 @@
-import { MASTERY_LEVELS, MASTERY_LEVEL_LABELS, STUDY_STATUSES, STUDY_STATUS_LABELS } from '@/domain/labels'
+import {
+  MASTERY_LEVELS,
+  MASTERY_LEVEL_ICONS,
+  MASTERY_LEVEL_LABELS,
+  STARRED_ICON,
+  STUDY_STATUSES,
+  STUDY_STATUS_LABELS,
+} from '@/domain/labels'
 import type { MasteryLevel, StudyStatus } from '@/types'
 import styles from './FilterControls.module.css'
 
@@ -36,6 +43,7 @@ export function FilterControls({
               checked={masteryLevels.includes(level)}
               onChange={() => onMasteryLevelsChange(toggle(masteryLevels, level))}
             />
+            <span className={styles.optionIcon}>{MASTERY_LEVEL_ICONS[level]}</span>
             {MASTERY_LEVEL_LABELS[level]}
           </label>
         ))}
@@ -49,6 +57,7 @@ export function FilterControls({
             checked={starredOnly}
             onChange={(e) => onStarredOnlyChange(e.target.checked)}
           />
+          <span className={styles.optionIcon}>{STARRED_ICON}</span>
           スター付きのみ表示
         </label>
       </fieldset>

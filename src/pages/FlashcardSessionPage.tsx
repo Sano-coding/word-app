@@ -4,7 +4,7 @@ import { Button } from '@/components/common/Button'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
 import { StarButton } from '@/components/session/StarButton'
 import { applyFlashcardLabel } from '@/domain/masteryLevel'
-import { MASTERY_LEVELS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
+import { MASTERY_LEVELS, MASTERY_LEVEL_ICONS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
 import { updateWord } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
@@ -96,7 +96,7 @@ export default function FlashcardSessionPage() {
         <div className={styles.labelButtons}>
           {MASTERY_LEVELS.map((level) => (
             <Button key={level} variant="secondary" onClick={() => handleLabelSelect(level)}>
-              {MASTERY_LEVEL_LABELS[level]}
+              {MASTERY_LEVEL_ICONS[level]} {MASTERY_LEVEL_LABELS[level]}
             </Button>
           ))}
         </div>

@@ -6,7 +6,15 @@ export const MASTERY_LEVEL_LABELS: Record<MasteryLevel, string> = {
   memorized: '覚えた',
 }
 
+export const MASTERY_LEVEL_ICONS: Record<MasteryLevel, string> = {
+  not_memorized: '🔴',
+  partially_memorized: '🟡',
+  memorized: '🟢',
+}
+
 export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memorized', 'memorized']
+
+export const STARRED_ICON = '⭐'
 
 export const STUDY_STATUS_LABELS: Record<StudyStatus, string> = {
   not_shown: '未出題',
