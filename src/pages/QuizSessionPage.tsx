@@ -89,12 +89,16 @@ export default function QuizSessionPage() {
     setPhase('feedback')
   }
 
+  function goToSummary() {
+    navigate(routes.quizSummary(tanchouId!), {
+      replace: true,
+      state: { answerLog, wordIds: queue.map((w) => w.id), filterSnapshot },
+    })
+  }
+
   function handleNext() {
     if (isLast) {
-      navigate(routes.quizSummary(tanchouId!), {
-        replace: true,
-        state: { answerLog, wordIds: queue.map((w) => w.id), filterSnapshot },
-      })
+      goToSummary()
       return
     }
     setCurrentIndex((i) => i + 1)
@@ -106,7 +110,12 @@ export default function QuizSessionPage() {
     <div className="page">
       <div className={styles.headerRow}>
         <ProgressIndicator current={currentIndex + 1} total={queue.length} unit="問" />
-        <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
+        <div className={styles.headerActions}>
+          <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
+          <Button variant="secondary" onClick={goToSummary}>
+            中断する
+          </Button>
+        </div>
       </div>
 
       {phase === 'question' && (
@@ -137,7 +146,9 @@ export default function QuizSessionPage() {
           <p className={styles.updatedLevel}>
             更新後の定着度：{MASTERY_LEVEL_ICONS[lastResult.newMasteryLevel]} {MASTERY_LEVEL_LABELS[lastResult.newMasteryLevel]}
           </p>
-          <Button onClick={handleNext}>{isLast ? '結果を見る' : '次の問題へ'}</Button>
+          <div className={styles.actions}>
+            <Button onClick={handleNext}>{isLast ? '結果を見る' : '次の問題へ'}</Button>
+          </div>
         </div>
       )}
     </div>
