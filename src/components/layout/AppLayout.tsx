@@ -1,12 +1,20 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useLibraryStats } from '@/hooks/useLibraryStats'
+import { routes } from '@/routes'
 import { Sidebar } from './Sidebar'
 import styles from './AppLayout.module.css'
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { tanchouCount, wordCount } = useLibraryStats()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.pathname === routes.home) {
+      setSidebarOpen(true)
+    }
+  }, [location.pathname])
 
   return (
     <div className={styles.shell}>

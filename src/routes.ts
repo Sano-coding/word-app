@@ -1,6 +1,7 @@
 export const routes = {
   create: '/create',
-  top: '/',
+  home: '/',
+  top: '/wordbooks',
   settings: '/settings',
   flashcardHub: '/flashcards',
   quizHub: '/quiz',

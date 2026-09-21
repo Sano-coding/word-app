@@ -6,6 +6,7 @@ import AccountCreatePage from '@/pages/AccountCreatePage'
 import AccountSettingsPage from '@/pages/AccountSettingsPage'
 import FlashcardEndPage from '@/pages/FlashcardEndPage'
 import FlashcardSessionPage from '@/pages/FlashcardSessionPage'
+import HomePage from '@/pages/HomePage'
 import PreSessionFilterPage from '@/pages/PreSessionFilterPage'
 import QuizSessionPage from '@/pages/QuizSessionPage'
 import QuizSummaryPage from '@/pages/QuizSummaryPage'
@@ -25,7 +26,7 @@ function AccountGate({ children }: { children: ReactNode }) {
     return <Navigate to={routes.create} replace />
   }
   if (account && location.pathname === routes.create) {
-    return <Navigate to={routes.top} replace />
+    return <Navigate to={routes.home} replace />
   }
   return <>{children}</>
 }
@@ -39,6 +40,7 @@ function App() {
             <Route path={routes.create} element={<AccountCreatePage />} />
 
             <Route element={<AppLayout />}>
+              <Route path={routes.home} element={<HomePage />} />
               <Route path={routes.top} element={<TopPage />} />
               <Route path={routes.settings} element={<AccountSettingsPage />} />
               <Route path={routePatterns.submenu} element={<SubmenuPage />} />
@@ -54,7 +56,7 @@ function App() {
             <Route path={routePatterns.quizSession} element={<QuizSessionPage />} />
             <Route path={routePatterns.quizSummary} element={<QuizSummaryPage />} />
 
-            <Route path="*" element={<Navigate to={routes.top} replace />} />
+            <Route path="*" element={<Navigate to={routes.home} replace />} />
           </Routes>
         </AccountGate>
       </AccountProvider>

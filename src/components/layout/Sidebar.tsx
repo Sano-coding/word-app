@@ -14,6 +14,13 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
+    key: 'home',
+    icon: '🏠',
+    label: 'ホーム',
+    path: routes.home,
+    isActive: (pathname) => pathname === routes.home,
+  },
+  {
     key: 'profile',
     icon: '👤',
     label: 'プロフィール',
