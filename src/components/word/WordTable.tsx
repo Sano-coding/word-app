@@ -5,7 +5,7 @@ import styles from './WordTable.module.css'
 
 interface WordTableProps {
   words: Word[]
-  onUpdate: (id: string, patch: Partial<Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus'>>) => void
+  onUpdate: (id: string, patch: Partial<Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus' | 'isStarred'>>) => void
   onEdit: (word: Word) => void
   onDelete: (word: Word) => void
 }
@@ -42,6 +42,15 @@ export function WordTable({ words, onUpdate, onEdit, onDelete }: WordTableProps)
             </span>
           ))}
         </div>
+        <div className={styles.summaryGroup}>
+          <span className={styles.summaryTitle}>スター</span>
+          <span className={styles.summaryItem}>
+            スター付き {words.filter((w) => w.isStarred).length}
+          </span>
+          <span className={styles.summaryItem}>
+            スターなし {words.filter((w) => !w.isStarred).length}
+          </span>
+        </div>
       </div>
 
       <div className={styles.tableWrap}>
@@ -53,6 +62,7 @@ export function WordTable({ words, onUpdate, onEdit, onDelete }: WordTableProps)
               <th>定着度</th>
               <th>フラッシュカード</th>
               <th>4択クイズ</th>
+              <th>スター</th>
               <th></th>
             </tr>
           </thead>

@@ -11,6 +11,7 @@ function makeWord(id: string, word: string, meaning: string): Word {
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
+    isStarred: false,
     createdAt: new Date().toISOString(),
   }
 }

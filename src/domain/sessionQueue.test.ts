@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildSessionQueue, filterWords, orderWords } from './sessionQueue'
+import type { SessionFilter } from './sessionQueue'
 import type { Word } from '@/types'
 
 function makeWord(partial: Partial<Word>): Word {
@@ -11,34 +12,53 @@ function makeWord(partial: Partial<Word>): Word {
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
+    isStarred: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     ...partial,
   }
 }
 
+function makeFilter(partial: Partial<SessionFilter> = {}): SessionFilter {
+  return { masteryLevels: [], statuses: [], starredOnly: false, ...partial }
+}
+
 describe('filterWords', () => {
   const words = [
     makeWord({ id: '1', masteryLevel: 'not_memorized', flashcardStatus: 'not_shown' }),
-    makeWord({ id: '2', masteryLevel: 'memorized', flashcardStatus: 'shown' }),
-    makeWord({ id: '3', masteryLevel: 'partially_memorized', flashcardStatus: 'not_shown' }),
+    makeWord({ id: '2', masteryLevel: 'memorized', flashcardStatus: 'shown', isStarred: true }),
+    makeWord({ id: '3', masteryLevel: 'partially_memorized', flashcardStatus: 'not_shown', isStarred: true }),
   ]
 
-  it('matches everything when both filter axes are empty', () => {
-    expect(filterWords(words, { masteryLevels: [], statuses: [] }, 'flashcardStatus')).toHaveLength(3)
+  it('matches everything when all filter axes are empty/off', () => {
+    expect(filterWords(words, makeFilter(), 'flashcardStatus')).toHaveLength(3)
   })
 
   it('filters by masteryLevel only', () => {
-    const result = filterWords(words, { masteryLevels: ['memorized'], statuses: [] }, 'flashcardStatus')
+    const result = filterWords(words, makeFilter({ masteryLevels: ['memorized'] }), 'flashcardStatus')
     expect(result.map((w) => w.id)).toEqual(['2'])
   })
 
   it('combines masteryLevel and status filters with AND', () => {
     const result = filterWords(
       words,
-      { masteryLevels: ['not_memorized', 'partially_memorized'], statuses: ['not_shown'] },
+      makeFilter({ masteryLevels: ['not_memorized', 'partially_memorized'], statuses: ['not_shown'] }),
       'flashcardStatus',
     )
     expect(result.map((w) => w.id)).toEqual(['1', '3'])
+  })
+
+  it('filters by starredOnly', () => {
+    const result = filterWords(words, makeFilter({ starredOnly: true }), 'flashcardStatus')
+    expect(result.map((w) => w.id)).toEqual(['2', '3'])
+  })
+
+  it('combines starredOnly with masteryLevel filter using AND', () => {
+    const result = filterWords(
+      words,
+      makeFilter({ masteryLevels: ['partially_memorized'], starredOnly: true }),
+      'flashcardStatus',
+    )
+    expect(result.map((w) => w.id)).toEqual(['3'])
   })
 })
 
@@ -67,7 +87,7 @@ describe('buildSessionQueue', () => {
     ]
     const queue = buildSessionQueue(
       words,
-      { masteryLevels: ['not_memorized'], statuses: [] },
+      makeFilter({ masteryLevels: ['not_memorized'] }),
       'flashcardStatus',
       'registration',
       1,
@@ -77,7 +97,7 @@ describe('buildSessionQueue', () => {
 
   it('returns fewer items than count when the filtered pool is smaller', () => {
     const words = [makeWord({ id: '1' })]
-    const queue = buildSessionQueue(words, { masteryLevels: [], statuses: [] }, 'flashcardStatus', 'registration', 10)
+    const queue = buildSessionQueue(words, makeFilter(), 'flashcardStatus', 'registration', 10)
     expect(queue).toHaveLength(1)
   })
 })

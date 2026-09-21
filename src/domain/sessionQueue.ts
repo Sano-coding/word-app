@@ -5,6 +5,7 @@ export type SessionOrder = 'registration' | 'random'
 export interface SessionFilter {
   masteryLevels: MasteryLevel[]
   statuses: StudyStatus[]
+  starredOnly: boolean
 }
 
 export interface FilterSnapshot {
@@ -22,7 +23,8 @@ export function filterWords(
   return words.filter((w) => {
     const matchesMastery = filter.masteryLevels.length === 0 || filter.masteryLevels.includes(w.masteryLevel)
     const matchesStatus = filter.statuses.length === 0 || filter.statuses.includes(w[statusField])
-    return matchesMastery && matchesStatus
+    const matchesStarred = !filter.starredOnly || w.isStarred
+    return matchesMastery && matchesStatus && matchesStarred
   })
 }
 

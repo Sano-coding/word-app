@@ -19,6 +19,7 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
   const [words, setWords] = useState<Word[]>([])
   const [masteryLevels, setMasteryLevels] = useState<MasteryLevel[]>([])
   const [statuses, setStatuses] = useState<StudyStatus[]>([])
+  const [starredOnly, setStarredOnly] = useState(false)
   const [order, setOrder] = useState<SessionOrder>('registration')
   const [count, setCount] = useState(10)
 
@@ -30,14 +31,14 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
   }, [tanchouId])
 
   const filteredCount = useMemo(
-    () => filterWords(words, { masteryLevels, statuses }, statusField).length,
-    [words, masteryLevels, statuses, statusField],
+    () => filterWords(words, { masteryLevels, statuses, starredOnly }, statusField).length,
+    [words, masteryLevels, statuses, starredOnly, statusField],
   )
 
   if (!tanchouId) return null
 
   function handleStart() {
-    const filterSnapshot: FilterSnapshot = { filter: { masteryLevels, statuses }, order, count }
+    const filterSnapshot: FilterSnapshot = { filter: { masteryLevels, statuses, starredOnly }, order, count }
     const queue = buildSessionQueue(words, filterSnapshot.filter, statusField, order, count)
     if (mode === 'flashcard') {
       navigate(routes.flashcardSession(tanchouId!), { state: { queue, filterSnapshot } })
@@ -59,6 +60,8 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
         onMasteryLevelsChange={setMasteryLevels}
         statuses={statuses}
         onStatusesChange={setStatuses}
+        starredOnly={starredOnly}
+        onStarredOnlyChange={setStarredOnly}
       />
 
       <div className={styles.row}>

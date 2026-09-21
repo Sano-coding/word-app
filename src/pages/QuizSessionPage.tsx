@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
+import { StarButton } from '@/components/session/StarButton'
 import { MASTERY_LEVEL_LABELS } from '@/domain/labels'
 import { applyQuizAnswer } from '@/domain/masteryLevel'
 import { evaluateQuizAnswer, generateChoices } from '@/domain/quizLogic'
@@ -36,6 +37,7 @@ export default function QuizSessionPage() {
   const [phase, setPhase] = useState<'question' | 'feedback'>('question')
   const [answerLog, setAnswerLog] = useState<QuizAnswerLogEntry[]>([])
   const [lastResult, setLastResult] = useState<{ isCorrect: boolean; newMasteryLevel: MasteryLevel } | null>(null)
+  const [starOverrides, setStarOverrides] = useState<Record<string, boolean>>({})
 
   const hasQueue = !!state && state.queue.length > 0
 
@@ -61,6 +63,13 @@ export default function QuizSessionPage() {
 
   const { queue, filterSnapshot } = state!
   const isLast = currentIndex === queue.length - 1
+  const isStarred = starOverrides[currentWord.id] ?? currentWord.isStarred
+
+  async function handleToggleStar() {
+    const next = !isStarred
+    setStarOverrides((prev) => ({ ...prev, [currentWord!.id]: next }))
+    await updateWord(currentWord!.id, { isStarred: next })
+  }
 
   async function handleSelect(choice: QuizChoice) {
     const isCorrect = evaluateQuizAnswer(choice)
@@ -95,7 +104,10 @@ export default function QuizSessionPage() {
 
   return (
     <div className="page">
-      <ProgressIndicator current={currentIndex + 1} total={queue.length} unit="問" />
+      <div className={styles.headerRow}>
+        <ProgressIndicator current={currentIndex + 1} total={queue.length} unit="問" />
+        <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
+      </div>
 
       {phase === 'question' && (
         <div>

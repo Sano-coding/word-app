@@ -21,6 +21,7 @@ function createWordRecord(tanchouId: string, input: NewWordInput): Word {
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
+    isStarred: false,
     createdAt: new Date().toISOString(),
   }
 }
@@ -48,6 +49,7 @@ export interface WordUpdate {
   masteryLevel?: MasteryLevel
   flashcardStatus?: StudyStatus
   quizStatus?: StudyStatus
+  isStarred?: boolean
 }
 
 export async function updateWord(id: string, patch: WordUpdate): Promise<Word> {

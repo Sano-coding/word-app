@@ -1,10 +1,11 @@
+import { StarButton } from '@/components/session/StarButton'
 import { MASTERY_LEVELS, MASTERY_LEVEL_LABELS, STUDY_STATUSES, STUDY_STATUS_LABELS } from '@/domain/labels'
 import type { MasteryLevel, StudyStatus, Word } from '@/types'
 import styles from './WordTable.module.css'
 
 interface WordTableRowProps {
   word: Word
-  onUpdate: (patch: Partial<Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus'>>) => void
+  onUpdate: (patch: Partial<Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus' | 'isStarred'>>) => void
   onEdit: () => void
   onDelete: () => void
 }
@@ -56,6 +57,9 @@ export function WordTableRow({ word, onUpdate, onEdit, onDelete }: WordTableRowP
             </option>
           ))}
         </select>
+      </td>
+      <td>
+        <StarButton isStarred={word.isStarred} onToggle={() => onUpdate({ isStarred: !word.isStarred })} />
       </td>
       <td>
         <button type="button" className={styles.deleteButton} onClick={onDelete} aria-label="削除">

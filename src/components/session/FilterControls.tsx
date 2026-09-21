@@ -8,6 +8,8 @@ interface FilterControlsProps {
   onMasteryLevelsChange: (levels: MasteryLevel[]) => void
   statuses: StudyStatus[]
   onStatusesChange: (statuses: StudyStatus[]) => void
+  starredOnly: boolean
+  onStarredOnlyChange: (value: boolean) => void
 }
 
 function toggle<T>(list: T[], value: T): T[] {
@@ -20,6 +22,8 @@ export function FilterControls({
   onMasteryLevelsChange,
   statuses,
   onStatusesChange,
+  starredOnly,
+  onStarredOnlyChange,
 }: FilterControlsProps) {
   return (
     <div className={styles.wrap}>
@@ -35,6 +39,18 @@ export function FilterControls({
             {MASTERY_LEVEL_LABELS[level]}
           </label>
         ))}
+      </fieldset>
+
+      <fieldset className={styles.group}>
+        <legend>スターで絞り込み</legend>
+        <label className={styles.option}>
+          <input
+            type="checkbox"
+            checked={starredOnly}
+            onChange={(e) => onStarredOnlyChange(e.target.checked)}
+          />
+          スター付きのみ表示
+        </label>
       </fieldset>
 
       <fieldset className={styles.group}>

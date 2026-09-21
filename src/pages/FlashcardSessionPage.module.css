@@ -5,6 +5,12 @@
   margin-top: 12px;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .card {
   width: 100%;
   min-height: 220px;

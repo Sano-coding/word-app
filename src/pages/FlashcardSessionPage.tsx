@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
+import { StarButton } from '@/components/session/StarButton'
 import { applyFlashcardLabel } from '@/domain/masteryLevel'
 import { MASTERY_LEVELS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
@@ -23,6 +24,7 @@ export default function FlashcardSessionPage() {
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [starOverrides, setStarOverrides] = useState<Record<string, boolean>>({})
 
   const hasQueue = !!state && state.queue.length > 0
 
@@ -37,6 +39,13 @@ export default function FlashcardSessionPage() {
   const { queue, filterSnapshot } = state!
   const currentWord = queue[currentIndex]
   const isLast = currentIndex === queue.length - 1
+  const isStarred = starOverrides[currentWord.id] ?? currentWord.isStarred
+
+  async function handleToggleStar() {
+    const next = !isStarred
+    setStarOverrides((prev) => ({ ...prev, [currentWord.id]: next }))
+    await updateWord(currentWord.id, { isStarred: next })
+  }
 
   function goToEnd() {
     navigate(routes.flashcardEnd(tanchouId!), {
@@ -62,9 +71,12 @@ export default function FlashcardSessionPage() {
     <div className="page">
       <div className={styles.headerRow}>
         <ProgressIndicator current={currentIndex + 1} total={queue.length} unit="枚" />
-        <Button variant="secondary" onClick={goToEnd}>
-          中断する
-        </Button>
+        <div className={styles.headerActions}>
+          <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
+          <Button variant="secondary" onClick={goToEnd}>
+            中断する
+          </Button>
+        </div>
       </div>
 
       <button type="button" className={styles.card} onClick={() => setFlipped((f) => !f)}>

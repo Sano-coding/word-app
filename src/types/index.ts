@@ -29,6 +29,7 @@ export interface Word {
   masteryLevel: MasteryLevel
   flashcardStatus: StudyStatus
   quizStatus: StudyStatus
+  isStarred: boolean
   createdAt: string
 }
 

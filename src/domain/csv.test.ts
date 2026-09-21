@@ -11,6 +11,7 @@ function makeWord(partial: Partial<Word>): Word {
     masteryLevel: 'not_memorized',
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
+    isStarred: false,
     createdAt: new Date().toISOString(),
     ...partial,
   }
