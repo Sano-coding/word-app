@@ -1,0 +1,24 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 40px 0;
+}
