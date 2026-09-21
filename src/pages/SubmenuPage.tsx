@@ -32,6 +32,10 @@ export default function SubmenuPage() {
       <h1 className={styles.title}>{tanchou.name}</h1>
 
       <div className={styles.menu}>
+        <button type="button" className={styles.menuItem} onClick={() => navigate(routes.wordList(tanchouId))}>
+          単語リスト
+        </button>
+
         <button type="button" className={styles.menuItem} onClick={() => navigate(routes.flashcardFilter(tanchouId))}>
           フラッシュカード
         </button>
@@ -49,10 +53,6 @@ export default function SubmenuPage() {
             4単語以上単語帳に登録することでこの機能は利用できるようになります。たくさん単語を登録しよう！
           </p>
         )}
-
-        <button type="button" className={styles.menuItem} onClick={() => navigate(routes.wordList(tanchouId))}>
-          単語リスト
-        </button>
       </div>
     </div>
   )
