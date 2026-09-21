@@ -1,32 +1,54 @@
-# React + TypeScript + Vite
+# 単語帳アプリ（word-app）
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+単語の登録・フラッシュカード・4択クイズで暗記学習ができる、ブラウザだけで動く単語暗記アプリです。データはすべてブラウザのlocalStorageに保存され、サーバーやログインは不要です（1端末＝1アカウント）。
 
-Currently, two official plugins are available:
+## 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 単語帳・単語の登録（手動登録／CSVインポート）
+- 単語ごとに「定着度」「フラッシュカード出題状況」「4択クイズ出題状況」「スター」「補足」を管理
+- フラッシュカード・4択クイズによる出題（定着度・スター・出題状況での絞り込み、登録順／ランダム出題、セッション中断対応）
+- 新規アカウント作成時に、お試し用のデフォルト単語帳「英検３級」（100単語）を自動生成
 
-## React Compiler
+## 技術スタック
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + TypeScript + Vite
+- React Router（ルーティング）
+- Vitest（単体テスト）
+- データ保存：ブラウザのlocalStorageのみ（リポジトリ層で抽象化。将来的なバックエンド差し替えを想定）
 
-## Expanding the Oxlint configuration
+## セットアップ
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+`http://localhost:5173` で開発サーバーが起動します。
+
+## スクリプト
+
+| コマンド | 内容 |
+|---|---|
+| `npm run dev` | 開発サーバーを起動 |
+| `npm run build` | 型チェック＋本番ビルド |
+| `npm run test` | Vitestで単体テストを実行 |
+| `npm run lint` | Oxlintで静的解析 |
+| `npm run preview` | ビルド済みファイルをローカルで確認 |
+
+## 関連ドキュメント
+
+- [`word-app-screens_1.md`](./word-app-screens_1.md)：画面ごとの目的・表示要素・操作の詳細仕様
+- [`word-app-gui.md`](./word-app-gui.md)：サイドバー・ヘッダー・アイコン規則など画面横断的なGUIルール
+- [`今後の展望.md`](./今後の展望.md)：フレンド・サーチ・ランキング・スマホアプリ化など今後の拡張構想
+
+## ディレクトリ構成（概要）
+
+```
+src/
+  types/          # Account / Tanchou / Word などの型定義
+  repositories/   # localStorageアクセスを抽象化したデータ層
+  domain/         # 定着度の状態遷移・CSVパース・出題キュー生成などの純粋なロジック
+  context/        # アカウント状態のReact Context
+  components/     # 画面共通・機能別のUIコンポーネント
+  pages/          # 各画面（ルートごとのページコンポーネント）
+```
