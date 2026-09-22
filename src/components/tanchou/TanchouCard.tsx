@@ -1,5 +1,6 @@
 import { StarButton } from '@/components/session/StarButton'
 import type { Word } from '@/types'
+import type { HTMLAttributes } from 'react'
 import styles from './TanchouCard.module.css'
 
 interface TanchouCardProps {
@@ -10,15 +11,41 @@ interface TanchouCardProps {
   onToggleStar: () => void
   onRename: () => void
   onDelete: () => void
+  dragHandleRef?: (node: HTMLElement | null) => void
+  dragHandleAttributes?: HTMLAttributes<HTMLButtonElement>
+  dragHandleListeners?: HTMLAttributes<HTMLButtonElement>
 }
 
-export function TanchouCard({ name, words, isStarred, onClick, onToggleStar, onRename, onDelete }: TanchouCardProps) {
+export function TanchouCard({
+  name,
+  words,
+  isStarred,
+  onClick,
+  onToggleStar,
+  onRename,
+  onDelete,
+  dragHandleRef,
+  dragHandleAttributes,
+  dragHandleListeners,
+}: TanchouCardProps) {
   const memorized = words.filter((w) => w.masteryLevel === 'memorized').length
   const partially = words.filter((w) => w.masteryLevel === 'partially_memorized').length
   const notMemorized = words.filter((w) => w.masteryLevel === 'not_memorized').length
 
   return (
     <div className={styles.card}>
+      {dragHandleRef && (
+        <button
+          type="button"
+          ref={dragHandleRef}
+          className={styles.dragHandle}
+          aria-label="ドラッグして並び替え"
+          {...dragHandleAttributes}
+          {...dragHandleListeners}
+        >
+          ⠿
+        </button>
+      )}
       <button type="button" className={styles.main} onClick={onClick}>
         <span className={styles.name}>{name}</span>
         <span className={styles.count}>{words.length}単語</span>

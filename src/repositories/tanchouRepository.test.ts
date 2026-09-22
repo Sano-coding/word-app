@@ -9,6 +9,7 @@ describe('tanchouRepository row mapping', () => {
       name: '英検３級',
       is_starred: true,
       visibility: 'private',
+      sort_order: 2,
       created_at: '2026-01-01T00:00:00.000Z',
     })
 
@@ -18,6 +19,7 @@ describe('tanchouRepository row mapping', () => {
       name: '英検３級',
       isStarred: true,
       createdAt: '2026-01-01T00:00:00.000Z',
+      sortOrder: 2,
       visibility: 'private',
     })
   })

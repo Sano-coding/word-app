@@ -1,11 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Button } from '@/components/common/Button'
 import { ConfirmDeleteDialog } from '@/components/tanchou/ConfirmDeleteDialog'
-import { TanchouCard } from '@/components/tanchou/TanchouCard'
+import { SortableTanchouCard } from '@/components/tanchou/SortableTanchouCard'
 import { TanchouFormDialog } from '@/components/tanchou/TanchouFormDialog'
 import { useAccount } from '@/context/AccountContext'
-import { createTanchou, deleteTanchou, listTanchous, renameTanchou, setTanchouStarred } from '@/repositories/tanchouRepository'
+import {
+  createTanchou,
+  deleteTanchou,
+  listTanchous,
+  renameTanchou,
+  reorderTanchous,
+  setTanchouStarred,
+} from '@/repositories/tanchouRepository'
 import { listWords } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
 import type { Tanchou, Word } from '@/types'
@@ -20,6 +30,8 @@ export default function TopPage() {
   const [renaming, setRenaming] = useState<Tanchou | null>(null)
   const [deleting, setDeleting] = useState<Tanchou | null>(null)
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
+
   const refresh = useCallback(async () => {
     if (!account) return
     const list = await listTanchous(account.id)
@@ -31,6 +43,23 @@ export default function TopPage() {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = tanchous.findIndex((t) => t.id === active.id)
+    const newIndex = tanchous.findIndex((t) => t.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reordered = arrayMove(tanchous, oldIndex, newIndex)
+    setTanchous(reordered)
+    try {
+      await reorderTanchous(reordered.map((t) => t.id))
+    } catch {
+      await refresh()
+    }
+  }
 
   if (!account) return null
 
@@ -45,21 +74,26 @@ export default function TopPage() {
         <p className={styles.empty}>まだ単語帳がありません。「+ 新規作成」から作成しましょう。</p>
       )}
 
-      {tanchous.map((t) => (
-        <TanchouCard
-          key={t.id}
-          name={t.name}
-          words={wordsByTanchou[t.id] ?? []}
-          isStarred={t.isStarred}
-          onClick={() => navigate(routes.submenu(t.id))}
-          onToggleStar={async () => {
-            await setTanchouStarred(t.id, !t.isStarred)
-            await refresh()
-          }}
-          onRename={() => setRenaming(t)}
-          onDelete={() => setDeleting(t)}
-        />
-      ))}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={tanchous.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+          {tanchous.map((t) => (
+            <SortableTanchouCard
+              key={t.id}
+              id={t.id}
+              name={t.name}
+              words={wordsByTanchou[t.id] ?? []}
+              isStarred={t.isStarred}
+              onClick={() => navigate(routes.submenu(t.id))}
+              onToggleStar={async () => {
+                await setTanchouStarred(t.id, !t.isStarred)
+                await refresh()
+              }}
+              onRename={() => setRenaming(t)}
+              onDelete={() => setDeleting(t)}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
 
       {creating && (
         <TanchouFormDialog

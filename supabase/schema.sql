@@ -15,6 +15,7 @@ create table if not exists public.tanchous (
   name text not null,
   is_starred boolean not null default false,
   visibility text not null default 'private',
+  sort_order integer not null default 0,
   created_at timestamptz not null default now()
 );
 
@@ -94,3 +95,19 @@ grant usage on schema public to authenticated;
 grant select, insert, update, delete on public.profiles to authenticated;
 grant select, insert, update, delete on public.tanchous to authenticated;
 grant select, insert, update, delete on public.words to authenticated;
+
+-- 2026-09-22: 単語帳のドラッグ並び替え用に sort_order を追加
+-- （既存プロジェクトに対する追加マイグレーション。上のcreate table実行時に
+-- 　sort_orderが既に含まれている場合、このブロックは実質何もしない）
+alter table public.tanchous add column if not exists sort_order integer;
+
+update public.tanchous t
+set sort_order = sub.rn
+from (
+  select id, row_number() over (partition by account_id order by created_at) - 1 as rn
+  from public.tanchous
+) sub
+where t.id = sub.id and t.sort_order is null;
+
+alter table public.tanchous alter column sort_order set not null;
+alter table public.tanchous alter column sort_order set default 0;

@@ -1,10 +1,15 @@
 import { supabase } from '@/lib/supabaseClient'
 import { notifyDataChanged } from './events'
+import { listTanchous } from './tanchouRepository'
 import type { LocalBackup } from './localBackup'
 
 /** ローカルストレージ（旧版）に残っている単語帳・単語を、現在ログイン中のアカウントへ丸ごと複製する */
 export async function migrateLocalDataToCloud(accountId: string, backup: LocalBackup): Promise<void> {
-  for (const tanchou of backup.tanchous) {
+  const orderedTanchous = [...backup.tanchous].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  const existing = await listTanchous(accountId)
+  const startOrder = existing.length > 0 ? Math.max(...existing.map((t) => t.sortOrder)) + 1 : 0
+
+  for (const [index, tanchou] of orderedTanchous.entries()) {
     const { data: tanchouRow, error: tanchouError } = await supabase
       .from('tanchous')
       .insert({
@@ -12,6 +17,7 @@ export async function migrateLocalDataToCloud(accountId: string, backup: LocalBa
         name: tanchou.name,
         is_starred: tanchou.isStarred,
         visibility: 'private',
+        sort_order: startOrder + index,
       })
       .select()
       .single()

@@ -15,6 +15,8 @@ export interface Tanchou {
   name: string
   isStarred: boolean
   createdAt: string
+  /** 単語帳一覧でのドラッグ並び替え順。小さいほど先頭に表示される */
+  sortOrder: number
   /** 将来の共有機能（全体公開／フレンド公開）を見据えた予約フィールド。現状は常に 'private' で、UI には一切出さない */
   visibility: 'private'
 }

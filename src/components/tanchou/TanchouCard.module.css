@@ -9,6 +9,26 @@
   margin-bottom: 10px;
 }
 
+.dragHandle {
+  flex-shrink: 0;
+  width: 32px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: grab;
+  touch-action: none;
+}
+
+.dragHandle:hover {
+  background: var(--color-bg);
+}
+
 .main {
   flex: 1;
   display: flex;
