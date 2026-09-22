@@ -20,16 +20,19 @@ export function AppLayout() {
   return (
     <div className={styles.shell}>
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {sidebarOpen && (
+        <button
+          type="button"
+          className={styles.backdrop}
+          onClick={() => setSidebarOpen(false)}
+          aria-label="メニューを閉じる"
+        />
+      )}
 
       <div className={styles.content}>
         <header className={styles.topHeader}>
           <div className={styles.headerLeft}>
-            <button
-              type="button"
-              className={styles.menuButton}
-              onClick={() => setSidebarOpen((open) => !open)}
-              aria-label={sidebarOpen ? 'メニューを閉じる' : 'メニューを開く'}
-            >
+            <button type="button" className={styles.menuButton} onClick={() => setSidebarOpen(true)} aria-label="メニューを開く">
               ☰
             </button>
             <span className={styles.headerTitle}>単語帳</span>

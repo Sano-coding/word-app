@@ -73,6 +73,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={36} />
             <span className={styles.nickname}>{account.nickname}</span>
           </button>
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="メニューを閉じる">
+            ＜＜
+          </button>
         </div>
       )}
 
