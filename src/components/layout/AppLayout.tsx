@@ -26,8 +26,8 @@ export function AppLayout() {
             <button
               type="button"
               className={styles.menuButton}
-              onClick={() => setSidebarOpen(true)}
-              aria-label="メニューを開く"
+              onClick={() => setSidebarOpen((open) => !open)}
+              aria-label={sidebarOpen ? 'メニューを閉じる' : 'メニューを開く'}
             >
               ☰
             </button>

@@ -67,17 +67,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <nav className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
-      <div className={styles.header}>
-        {account && (
+      {account && (
+        <div className={styles.header}>
           <div className={styles.identity}>
             <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={36} />
             <span className={styles.nickname}>{account.nickname}</span>
           </div>
-        )}
-        <button type="button" className={styles.closeButton} onClick={onClose} aria-label="メニューを閉じる">
-          «
-        </button>
-      </div>
+        </div>
+      )}
 
       <ul className={styles.navList}>
         {NAV_ITEMS.map((item) => (
