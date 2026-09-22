@@ -50,7 +50,7 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
   return (
     <div className="page">
       <Button variant="secondary" onClick={() => navigate(routes.submenu(tanchouId))}>
-        ← サブメニューへ
+        ← 戻る
       </Button>
       <h1 className={styles.title}>{mode === 'flashcard' ? 'フラッシュカード' : '4択クイズ'}の設定</h1>
 

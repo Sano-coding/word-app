@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { StarButton } from '@/components/session/StarButton'
 import { MASTERY_LEVELS, MASTERY_LEVEL_LABELS, STUDY_STATUSES, STUDY_STATUS_LABELS } from '@/domain/labels'
 import type { MasteryLevel, StudyStatus, Word } from '@/types'
@@ -11,6 +12,8 @@ interface WordTableRowProps {
 }
 
 export function WordTableRow({ word, onUpdate, onEdit, onDelete }: WordTableRowProps) {
+  const [showNote, setShowNote] = useState(false)
+
   return (
     <tr>
       <td className={styles.wordCell}>
@@ -18,9 +21,22 @@ export function WordTableRow({ word, onUpdate, onEdit, onDelete }: WordTableRowP
           {word.word}
         </button>
       </td>
-      <td>{word.meaning}</td>
-      <td className={styles.noteCell} title={word.note || undefined}>
-        {word.note ? '📝' : '—'}
+      <td className={styles.meaningCell}>{word.meaning}</td>
+      <td className={styles.noteCell}>
+        {word.note ? (
+          <>
+            <button type="button" className={styles.noteButton} onClick={() => setShowNote((v) => !v)} aria-label="補足を表示">
+              📝
+            </button>
+            {showNote && (
+              <div className={styles.notePopup} onClick={() => setShowNote(false)}>
+                {word.note}
+              </div>
+            )}
+          </>
+        ) : (
+          '—'
+        )}
       </td>
       <td>
         <select

@@ -27,7 +27,7 @@ export default function SubmenuPage() {
   return (
     <div className="page">
       <Button variant="secondary" onClick={() => navigate(routes.top)}>
-        ← 単語帳一覧へ
+        ← 戻る
       </Button>
       <h1 className={styles.title}>{tanchou.name}</h1>
 

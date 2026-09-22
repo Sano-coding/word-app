@@ -42,7 +42,7 @@ export default function WordListPage() {
   return (
     <div className="page">
       <Button variant="secondary" onClick={() => navigate(routes.submenu(tanchouId))}>
-        ← サブメニューへ
+        ← 戻る
       </Button>
 
       <div className={styles.headerRow}>
