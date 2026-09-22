@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Button } from '@/components/common/Button'
 import { supabase } from '@/lib/supabaseClient'
 import styles from './AccountCreatePage.module.css'
+import loginStyles from './LoginPage.module.css'
 
 type Mode = 'signIn' | 'signUp'
 
@@ -54,10 +55,24 @@ export default function LoginPage() {
     }
   }
 
+  const isSignIn = mode === 'signIn'
+
   return (
     <div className="page">
-      <h1 className={styles.title}>単語帳</h1>
-      <p className={styles.lead}>{mode === 'signIn' ? 'ログインしてはじめましょう' : '新規登録してはじめましょう'}</p>
+      <h1 className={`${styles.title} ${loginStyles.titleRow}`}>
+        <span className={loginStyles.titleIcon}>📚</span>単語帳
+      </h1>
+      <p className={styles.lead}>
+        {isSignIn ? (
+          <>
+            <span className={loginStyles.underline}>ログイン</span>してはじめましょう
+          </>
+        ) : (
+          <>
+            <span className={loginStyles.underline}>新規登録</span>してはじめましょう
+          </>
+        )}
+      </p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.field}>
@@ -89,19 +104,19 @@ export default function LoginPage() {
         {info && <p className={styles.label}>{info}</p>}
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button type="submit" disabled={submitting}>
-            {mode === 'signIn' ? 'ログイン' : '新規登録'}
+          <Button type="submit" variant={isSignIn ? 'primary' : 'accent'} disabled={submitting}>
+            {isSignIn ? 'ログイン' : '新規登録'}
           </Button>
           <Button
             type="button"
-            variant="secondary"
+            variant={isSignIn ? 'accent' : 'primary'}
             onClick={() => {
-              setMode(mode === 'signIn' ? 'signUp' : 'signIn')
+              setMode(isSignIn ? 'signUp' : 'signIn')
               setError(null)
               setInfo(null)
             }}
           >
-            {mode === 'signIn' ? '新規登録はこちら' : 'ログインはこちら'}
+            {isSignIn ? '新規登録はこちら' : 'ログインはこちら'}
           </Button>
         </div>
       </form>

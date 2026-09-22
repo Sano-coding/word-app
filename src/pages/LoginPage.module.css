@@ -1,0 +1,15 @@
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titleIcon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.underline {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

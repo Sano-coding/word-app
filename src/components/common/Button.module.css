@@ -32,3 +32,8 @@
   background: var(--color-danger);
   color: #fff;
 }
+
+.accent {
+  background: var(--color-accent);
+  color: #fff;
+}
