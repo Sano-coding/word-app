@@ -33,12 +33,7 @@ export function TanchouCard({ name, words, isStarred, onClick, onToggleStar, onR
         <button type="button" className={styles.actionButton} onClick={onRename} aria-label="名前を変更">
           ✏️
         </button>
-        <button
-          type="button"
-          className={`${styles.actionButton} ${styles.deleteButton}`}
-          onClick={onDelete}
-          aria-label="削除"
-        >
+        <button type="button" className={styles.actionButton} onClick={onDelete} aria-label="削除">
           🗑️
         </button>
       </div>
