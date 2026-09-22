@@ -75,7 +75,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
         )}
         <button type="button" className={styles.closeButton} onClick={onClose} aria-label="メニューを閉じる">
-          ✕
+          «
         </button>
       </div>
 
