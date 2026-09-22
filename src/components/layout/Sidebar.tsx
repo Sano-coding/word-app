@@ -69,10 +69,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     <nav className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
       {account && (
         <div className={styles.header}>
-          <div className={styles.identity}>
+          <button type="button" className={styles.identity} onClick={() => handleNavigate(routes.settings)}>
             <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={36} />
             <span className={styles.nickname}>{account.nickname}</span>
-          </div>
+          </button>
         </div>
       )}
 
