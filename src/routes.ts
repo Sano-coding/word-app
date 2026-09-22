@@ -1,4 +1,5 @@
 export const routes = {
+  login: '/login',
   create: '/create',
   home: '/',
   top: '/wordbooks',

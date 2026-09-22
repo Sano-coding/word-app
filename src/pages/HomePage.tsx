@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { LocalDataMigrationBanner } from '@/components/migration/LocalDataMigrationBanner'
 import { routes } from '@/routes'
 import styles from './HomePage.module.css'
 
@@ -32,6 +33,8 @@ export default function HomePage() {
   return (
     <div className="page">
       <h1 className={styles.title}>ホーム</h1>
+
+      <LocalDataMigrationBanner />
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>アップデートのお知らせ</h2>

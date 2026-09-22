@@ -1,63 +1,81 @@
 import { DEFAULT_TANCHOU_NAME, DEFAULT_TANCHOU_WORDS } from '@/domain/seedData'
+import { supabase } from '@/lib/supabaseClient'
 import { notifyDataChanged } from './events'
-import { readStorage, writeStorage } from './storage'
-import { bulkImportWords, deleteWordsByTanchou } from './wordRepository'
+import { bulkImportWords } from './wordRepository'
 import type { Tanchou } from '@/types'
 
-const KEY = 'tanchous'
-
-function readAll(): Tanchou[] {
-  return readStorage<Tanchou[]>(KEY) ?? []
+interface TanchouRow {
+  id: string
+  account_id: string
+  name: string
+  is_starred: boolean
+  visibility: string
+  created_at: string
 }
 
-function writeAll(tanchous: Tanchou[]): void {
-  writeStorage(KEY, tanchous)
+export function toTanchou(row: TanchouRow): Tanchou {
+  return {
+    id: row.id,
+    accountId: row.account_id,
+    name: row.name,
+    isStarred: row.is_starred,
+    createdAt: row.created_at,
+    visibility: row.visibility as Tanchou['visibility'],
+  }
 }
 
 export async function listTanchous(accountId: string): Promise<Tanchou[]> {
-  return readAll()
-    .filter((t) => t.accountId === accountId)
-    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  const { data, error } = await supabase
+    .from('tanchous')
+    .select('*')
+    .eq('account_id', accountId)
+    .order('created_at', { ascending: true })
+  if (error) {
+    throw error
+  }
+  return (data ?? []).map(toTanchou)
 }
 
 export async function getTanchou(id: string): Promise<Tanchou | null> {
-  return readAll().find((t) => t.id === id) ?? null
+  const { data, error } = await supabase.from('tanchous').select('*').eq('id', id).maybeSingle()
+  if (error) {
+    throw error
+  }
+  return data ? toTanchou(data) : null
 }
 
 export async function createTanchou(accountId: string, name: string): Promise<Tanchou> {
-  const tanchou: Tanchou = {
-    id: crypto.randomUUID(),
-    accountId,
-    name,
-    isStarred: false,
-    createdAt: new Date().toISOString(),
-    visibility: 'private',
+  const { data, error } = await supabase
+    .from('tanchous')
+    .insert({ account_id: accountId, name, is_starred: false, visibility: 'private' })
+    .select()
+    .single()
+  if (error) {
+    throw error
   }
-  writeAll([...readAll(), tanchou])
   notifyDataChanged()
-  return tanchou
+  return toTanchou(data)
 }
 
 export async function renameTanchou(id: string, name: string): Promise<Tanchou> {
-  const all = readAll()
-  const target = all.find((t) => t.id === id)
-  if (!target) {
-    throw new Error('単語帳が見つかりません')
+  const { data, error } = await supabase.from('tanchous').update({ name }).eq('id', id).select().single()
+  if (error) {
+    throw error
   }
-  const updated: Tanchou = { ...target, name }
-  writeAll(all.map((t) => (t.id === id ? updated : t)))
-  return updated
+  return toTanchou(data)
 }
 
 export async function setTanchouStarred(id: string, isStarred: boolean): Promise<Tanchou> {
-  const all = readAll()
-  const target = all.find((t) => t.id === id)
-  if (!target) {
-    throw new Error('単語帳が見つかりません')
+  const { data, error } = await supabase
+    .from('tanchous')
+    .update({ is_starred: isStarred })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) {
+    throw error
   }
-  const updated: Tanchou = { ...target, isStarred }
-  writeAll(all.map((t) => (t.id === id ? updated : t)))
-  return updated
+  return toTanchou(data)
 }
 
 /** 新規アカウント作成時に、お試し・チュートリアル用の単語帳を自動生成する */
@@ -67,7 +85,9 @@ export async function seedDefaultTanchou(accountId: string): Promise<void> {
 }
 
 export async function deleteTanchou(id: string): Promise<void> {
-  writeAll(readAll().filter((t) => t.id !== id))
-  await deleteWordsByTanchou(id)
+  const { error } = await supabase.from('tanchous').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
   notifyDataChanged()
 }

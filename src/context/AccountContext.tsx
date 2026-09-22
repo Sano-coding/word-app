@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { getAccount } from '@/repositories/accountRepository'
+import { useAuth } from './AuthContext'
 import type { Account } from '@/types'
 
 interface AccountContextValue {
@@ -12,23 +13,27 @@ interface AccountContextValue {
 const AccountContext = createContext<AccountContextValue | undefined>(undefined)
 
 export function AccountProvider({ children }: { children: ReactNode }) {
+  const { session, loading: authLoading } = useAuth()
   const [account, setAccount] = useState<Account | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refreshAccount = useCallback(async () => {
+    if (!session) {
+      setAccount(null)
+      return
+    }
     const current = await getAccount()
     setAccount(current)
-  }, [])
+  }, [session])
 
   useEffect(() => {
+    if (authLoading) return
     setLoading(true)
     refreshAccount().finally(() => setLoading(false))
-  }, [refreshAccount])
+  }, [authLoading, refreshAccount])
 
   return (
-    <AccountContext.Provider value={{ account, loading, refreshAccount }}>
-      {children}
-    </AccountContext.Provider>
+    <AccountContext.Provider value={{ account, loading, refreshAccount }}>{children}</AccountContext.Provider>
   )
 }
 

@@ -1,55 +1,38 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { createWord, deleteWord, deleteWordsByTanchou, listWords, updateWord } from './wordRepository'
+import { describe, expect, it } from 'vitest'
+import { toWord, toWordRowPatch } from './wordRepository'
 
-beforeEach(() => {
-  window.localStorage.clear()
-})
+describe('wordRepository row mapping', () => {
+  it('converts a snake_case DB row into the camelCase Word type', () => {
+    const word = toWord({
+      id: 'w1',
+      tanchou_id: 't1',
+      word: 'apple',
+      meaning: 'りんご',
+      note: '赤い果物',
+      mastery_level: 'memorized',
+      flashcard_status: 'shown',
+      quiz_status: 'not_shown',
+      is_starred: true,
+      created_at: '2026-01-01T00:00:00.000Z',
+    })
 
-describe('wordRepository', () => {
-  it('creates a word with default attributes', async () => {
-    const word = await createWord('tanchou-1', { word: 'apple', meaning: 'りんご' })
-    expect(word.masteryLevel).toBe('not_memorized')
-    expect(word.flashcardStatus).toBe('not_shown')
-    expect(word.quizStatus).toBe('not_shown')
-    expect(word.note).toBe('')
+    expect(word).toEqual({
+      id: 'w1',
+      tanchouId: 't1',
+      word: 'apple',
+      meaning: 'りんご',
+      note: '赤い果物',
+      masteryLevel: 'memorized',
+      flashcardStatus: 'shown',
+      quizStatus: 'not_shown',
+      isStarred: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+    })
   })
 
-  it('creates a word with a note when provided, trimmed', async () => {
-    const word = await createWord('tanchou-1', { word: 'apple', meaning: 'りんご', note: '  赤い果物  ' })
-    expect(word.note).toBe('赤い果物')
-  })
-
-  it('lists only words belonging to the given tanchou, sorted by creation order', async () => {
-    await createWord('tanchou-1', { word: 'apple', meaning: 'りんご' })
-    await createWord('tanchou-2', { word: 'orange', meaning: 'オレンジ' })
-    await createWord('tanchou-1', { word: 'banana', meaning: 'バナナ' })
-
-    const words = await listWords('tanchou-1')
-    expect(words.map((w) => w.word)).toEqual(['apple', 'banana'])
-  })
-
-  it('updates only the given fields, leaving others untouched', async () => {
-    const word = await createWord('tanchou-1', { word: 'apple', meaning: 'りんご' })
-    const updated = await updateWord(word.id, { masteryLevel: 'memorized' })
-    expect(updated.masteryLevel).toBe('memorized')
-    expect(updated.flashcardStatus).toBe('not_shown')
-    expect(updated.meaning).toBe('りんご')
-  })
-
-  it('deletes a word by id', async () => {
-    const word = await createWord('tanchou-1', { word: 'apple', meaning: 'りんご' })
-    await deleteWord(word.id)
-    expect(await listWords('tanchou-1')).toHaveLength(0)
-  })
-
-  it('deletes all words belonging to a tanchou', async () => {
-    await createWord('tanchou-1', { word: 'apple', meaning: 'りんご' })
-    await createWord('tanchou-1', { word: 'banana', meaning: 'バナナ' })
-    await createWord('tanchou-2', { word: 'orange', meaning: 'オレンジ' })
-
-    await deleteWordsByTanchou('tanchou-1')
-
-    expect(await listWords('tanchou-1')).toHaveLength(0)
-    expect(await listWords('tanchou-2')).toHaveLength(1)
+  it('builds a DB patch containing only the given fields', () => {
+    expect(toWordRowPatch({ masteryLevel: 'memorized' })).toEqual({ mastery_level: 'memorized' })
+    expect(toWordRowPatch({ isStarred: true, note: 'x' })).toEqual({ is_starred: true, note: 'x' })
+    expect(toWordRowPatch({})).toEqual({})
   })
 })

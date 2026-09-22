@@ -1,47 +1,71 @@
+import { supabase } from '@/lib/supabaseClient'
 import { notifyDataChanged } from './events'
-import { readStorage, writeStorage } from './storage'
 import type { MasteryLevel, NewWordInput, StudyStatus, Word } from '@/types'
 
-const KEY = 'words'
-
-function readAll(): Word[] {
-  return readStorage<Word[]>(KEY) ?? []
+interface WordRow {
+  id: string
+  tanchou_id: string
+  word: string
+  meaning: string
+  note: string
+  mastery_level: MasteryLevel
+  flashcard_status: StudyStatus
+  quiz_status: StudyStatus
+  is_starred: boolean
+  created_at: string
 }
 
-function writeAll(words: Word[]): void {
-  writeStorage(KEY, words)
-}
-
-function createWordRecord(tanchouId: string, input: NewWordInput): Word {
+export function toWord(row: WordRow): Word {
   return {
-    id: crypto.randomUUID(),
-    tanchouId,
-    word: input.word,
-    meaning: input.meaning,
-    note: input.note?.trim() ?? '',
-    masteryLevel: 'not_memorized',
-    flashcardStatus: 'not_shown',
-    quizStatus: 'not_shown',
-    isStarred: false,
-    createdAt: new Date().toISOString(),
+    id: row.id,
+    tanchouId: row.tanchou_id,
+    word: row.word,
+    meaning: row.meaning,
+    note: row.note,
+    masteryLevel: row.mastery_level,
+    flashcardStatus: row.flashcard_status,
+    quizStatus: row.quiz_status,
+    isStarred: row.is_starred,
+    createdAt: row.created_at,
   }
 }
 
 export async function listWords(tanchouId: string): Promise<Word[]> {
-  return readAll()
-    .filter((w) => w.tanchouId === tanchouId)
-    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  const { data, error } = await supabase
+    .from('words')
+    .select('*')
+    .eq('tanchou_id', tanchouId)
+    .order('created_at', { ascending: true })
+  if (error) {
+    throw error
+  }
+  return (data ?? []).map(toWord)
 }
 
 export async function getWord(id: string): Promise<Word | null> {
-  return readAll().find((w) => w.id === id) ?? null
+  const { data, error } = await supabase.from('words').select('*').eq('id', id).maybeSingle()
+  if (error) {
+    throw error
+  }
+  return data ? toWord(data) : null
 }
 
 export async function createWord(tanchouId: string, input: NewWordInput): Promise<Word> {
-  const word = createWordRecord(tanchouId, input)
-  writeAll([...readAll(), word])
+  const { data, error } = await supabase
+    .from('words')
+    .insert({
+      tanchou_id: tanchouId,
+      word: input.word,
+      meaning: input.meaning,
+      note: input.note?.trim() ?? '',
+    })
+    .select()
+    .single()
+  if (error) {
+    throw error
+  }
   notifyDataChanged()
-  return word
+  return toWord(data)
 }
 
 export interface WordUpdate {
@@ -54,24 +78,39 @@ export interface WordUpdate {
   isStarred?: boolean
 }
 
+export function toWordRowPatch(patch: WordUpdate): Record<string, unknown> {
+  const row: Record<string, unknown> = {}
+  if (patch.word !== undefined) row.word = patch.word
+  if (patch.meaning !== undefined) row.meaning = patch.meaning
+  if (patch.note !== undefined) row.note = patch.note
+  if (patch.masteryLevel !== undefined) row.mastery_level = patch.masteryLevel
+  if (patch.flashcardStatus !== undefined) row.flashcard_status = patch.flashcardStatus
+  if (patch.quizStatus !== undefined) row.quiz_status = patch.quizStatus
+  if (patch.isStarred !== undefined) row.is_starred = patch.isStarred
+  return row
+}
+
 export async function updateWord(id: string, patch: WordUpdate): Promise<Word> {
-  const all = readAll()
-  const target = all.find((w) => w.id === id)
-  if (!target) {
-    throw new Error('単語が見つかりません')
+  const { data, error } = await supabase.from('words').update(toWordRowPatch(patch)).eq('id', id).select().single()
+  if (error) {
+    throw error
   }
-  const updated: Word = { ...target, ...patch }
-  writeAll(all.map((w) => (w.id === id ? updated : w)))
-  return updated
+  return toWord(data)
 }
 
 export async function deleteWord(id: string): Promise<void> {
-  writeAll(readAll().filter((w) => w.id !== id))
+  const { error } = await supabase.from('words').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
   notifyDataChanged()
 }
 
 export async function deleteWordsByTanchou(tanchouId: string): Promise<void> {
-  writeAll(readAll().filter((w) => w.tanchouId !== tanchouId))
+  const { error } = await supabase.from('words').delete().eq('tanchou_id', tanchouId)
+  if (error) {
+    throw error
+  }
 }
 
 export interface BulkImportPlan {
@@ -80,12 +119,26 @@ export interface BulkImportPlan {
 }
 
 export async function bulkImportWords(tanchouId: string, plan: BulkImportPlan): Promise<void> {
-  const all = readAll()
-  const updated = all.map((w) => {
-    const match = plan.updates.find((u) => u.id === w.id)
-    return match ? { ...w, meaning: match.meaning, note: match.note } : w
-  })
-  const created = plan.creates.map((input) => createWordRecord(tanchouId, input))
-  writeAll([...updated, ...created])
+  if (plan.updates.length > 0) {
+    const results = await Promise.all(
+      plan.updates.map((u) => supabase.from('words').update({ meaning: u.meaning, note: u.note }).eq('id', u.id)),
+    )
+    const failed = results.find((r) => r.error)
+    if (failed?.error) {
+      throw failed.error
+    }
+  }
+  if (plan.creates.length > 0) {
+    const rows = plan.creates.map((input) => ({
+      tanchou_id: tanchouId,
+      word: input.word,
+      meaning: input.meaning,
+      note: input.note?.trim() ?? '',
+    }))
+    const { error } = await supabase.from('words').insert(rows)
+    if (error) {
+      throw error
+    }
+  }
   notifyDataChanged()
 }

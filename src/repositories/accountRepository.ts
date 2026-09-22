@@ -1,10 +1,42 @@
-import { readStorage, writeStorage } from './storage'
+import { supabase } from '@/lib/supabaseClient'
 import type { Account, IconType } from '@/types'
 
-const KEY = 'account'
+interface ProfileRow {
+  id: string
+  nickname: string
+  icon_type: IconType
+  icon_value: string | null
+  created_at: string
+}
+
+export function toAccount(row: ProfileRow): Account {
+  return {
+    id: row.id,
+    nickname: row.nickname,
+    iconType: row.icon_type,
+    iconValue: row.icon_value,
+    createdAt: row.created_at,
+  }
+}
+
+async function getCurrentUserId(): Promise<string | null> {
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data.user) {
+    return null
+  }
+  return data.user.id
+}
 
 export async function getAccount(): Promise<Account | null> {
-  return readStorage<Account>(KEY)
+  const userId = await getCurrentUserId()
+  if (!userId) {
+    return null
+  }
+  const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+  if (error) {
+    throw error
+  }
+  return data ? toAccount(data) : null
 }
 
 export interface CreateAccountInput {
@@ -14,15 +46,24 @@ export interface CreateAccountInput {
 }
 
 export async function createAccount(input: CreateAccountInput): Promise<Account> {
-  const account: Account = {
-    id: crypto.randomUUID(),
-    nickname: input.nickname,
-    iconType: input.iconType,
-    iconValue: input.iconValue,
-    createdAt: new Date().toISOString(),
+  const userId = await getCurrentUserId()
+  if (!userId) {
+    throw new Error('ログインしていません')
   }
-  writeStorage(KEY, account)
-  return account
+  const { data, error } = await supabase
+    .from('profiles')
+    .insert({
+      id: userId,
+      nickname: input.nickname,
+      icon_type: input.iconType,
+      icon_value: input.iconValue,
+    })
+    .select()
+    .single()
+  if (error) {
+    throw error
+  }
+  return toAccount(data)
 }
 
 export interface UpdateAccountInput {
@@ -32,16 +73,22 @@ export interface UpdateAccountInput {
 }
 
 export async function updateAccount(input: UpdateAccountInput): Promise<Account> {
-  const existing = await getAccount()
-  if (!existing) {
-    throw new Error('アカウントが存在しません')
+  const userId = await getCurrentUserId()
+  if (!userId) {
+    throw new Error('ログインしていません')
   }
-  const updated: Account = {
-    ...existing,
-    nickname: input.nickname,
-    iconType: input.iconType,
-    iconValue: input.iconValue,
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({
+      nickname: input.nickname,
+      icon_type: input.iconType,
+      icon_value: input.iconValue,
+    })
+    .eq('id', userId)
+    .select()
+    .single()
+  if (error) {
+    throw error
   }
-  writeStorage(KEY, updated)
-  return updated
+  return toAccount(data)
 }

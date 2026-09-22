@@ -5,6 +5,7 @@ import { Button } from '@/components/common/Button'
 import { IconPicker } from '@/components/account/IconPicker'
 import { useAccount } from '@/context/AccountContext'
 import { isValidNickname } from '@/domain/validation'
+import { supabase } from '@/lib/supabaseClient'
 import { updateAccount } from '@/repositories/accountRepository'
 import { StorageQuotaError } from '@/repositories/storage'
 import { routes } from '@/routes'
@@ -90,6 +91,12 @@ export default function AccountSettingsPage() {
           </Button>
         </div>
       </form>
+
+      <div style={{ marginTop: 32 }}>
+        <Button type="button" variant="danger" onClick={() => supabase.auth.signOut()}>
+          ログアウト
+        </Button>
+      </div>
     </div>
   )
 }
