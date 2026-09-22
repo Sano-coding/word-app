@@ -11,7 +11,8 @@ export function AppLayout() {
   const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname === routes.home) {
+    const isDesktopWidth = window.matchMedia('(min-width: 768px)').matches
+    if (location.pathname === routes.home && isDesktopWidth) {
       setSidebarOpen(true)
     }
   }, [location.pathname])
