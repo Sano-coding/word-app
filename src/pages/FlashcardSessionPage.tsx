@@ -68,7 +68,7 @@ export default function FlashcardSessionPage() {
   }
 
   return (
-    <div className="page">
+    <div className={`page ${styles.sessionPage}`}>
       <div className={styles.headerRow}>
         <ProgressIndicator current={currentIndex + 1} total={queue.length} unit="枚" />
         <div className={styles.headerActions}>
@@ -79,28 +79,33 @@ export default function FlashcardSessionPage() {
         </div>
       </div>
 
-      <button type="button" className={styles.card} onClick={() => setFlipped((f) => !f)}>
-        {!flipped ? (
-          <span className={styles.word}>{currentWord.word}</span>
-        ) : (
-          <div className={styles.back}>
-            <span className={styles.meaning}>{currentWord.meaning}</span>
-            {currentWord.note && <span className={styles.note}>{currentWord.note}</span>}
-            <span className={styles.currentLevel}>現在の定着度：{MASTERY_LEVEL_LABELS[currentWord.masteryLevel]}</span>
+      {!flipped ? (
+        <button type="button" className={styles.tapArea} onClick={() => setFlipped(true)}>
+          <div className={styles.card}>
+            <span className={styles.word}>{currentWord.word}</span>
           </div>
-        )}
-      </button>
-
-      {!flipped && <p className={styles.hint}>カードをタップして意味を確認</p>}
-
-      {flipped && (
-        <div className={styles.labelButtons}>
-          {MASTERY_LEVELS.map((level) => (
-            <Button key={level} variant="secondary" onClick={() => handleLabelSelect(level)}>
-              {MASTERY_LEVEL_ICONS[level]} {MASTERY_LEVEL_LABELS[level]}
-            </Button>
-          ))}
-        </div>
+          <p className={styles.hint}>タップして意味を確認</p>
+        </button>
+      ) : (
+        <>
+          <div className={styles.card}>
+            <div className={styles.back}>
+              <span className={styles.meaning}>{currentWord.meaning}</span>
+              {currentWord.note && <span className={styles.note}>{currentWord.note}</span>}
+            </div>
+          </div>
+          <p className={styles.currentLevel}>現在の定着度：{MASTERY_LEVEL_LABELS[currentWord.masteryLevel]}</p>
+          <div className={styles.labelButtonsSpacer} />
+          <div className={styles.labelButtonsBar}>
+            <div className={styles.labelButtons}>
+              {MASTERY_LEVELS.map((level) => (
+                <Button key={level} variant="secondary" onClick={() => handleLabelSelect(level)}>
+                  {MASTERY_LEVEL_ICONS[level]} {MASTERY_LEVEL_LABELS[level]}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
