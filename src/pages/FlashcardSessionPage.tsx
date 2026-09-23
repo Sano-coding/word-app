@@ -90,6 +90,9 @@ export default function FlashcardSessionPage() {
         <>
           <div className={styles.card}>
             <div className={styles.back}>
+              <button type="button" className={styles.backToWordButton} onClick={() => setFlipped(false)}>
+                ← 単語に戻る
+              </button>
               <span className={styles.meaning}>{currentWord.meaning}</span>
               {currentWord.note && <span className={styles.note}>{currentWord.note}</span>}
             </div>
