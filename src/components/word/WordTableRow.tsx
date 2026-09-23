@@ -17,7 +17,7 @@ export function WordTableRow({ word, onUpdate, onEdit, onDelete }: WordTableRowP
   return (
     <tr>
       <td className={styles.wordCell}>
-        <button type="button" className={styles.wordButton} onClick={onEdit}>
+        <button type="button" className={styles.wordButton} onClick={onEdit} title={word.word}>
           {word.word}
         </button>
       </td>

@@ -49,11 +49,25 @@
   white-space: nowrap;
 }
 
+.table th:first-child,
+.wordCell {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: var(--color-surface);
+  box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.15);
+}
+
 .wordCell {
   font-weight: 600;
 }
 
 .wordButton {
+  display: inline-block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background: none;
   border: none;
   padding: 0;
@@ -61,6 +75,7 @@
   font-size: 0.85rem;
   color: var(--color-primary);
   cursor: pointer;
+  vertical-align: bottom;
 }
 
 .meaningCell {
