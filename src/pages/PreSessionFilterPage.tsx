@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
+import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { FilterControls } from '@/components/session/FilterControls'
 import { buildSessionQueue, filterWords } from '@/domain/sessionQueue'
 import type { FilterSnapshot, SessionOrder } from '@/domain/sessionQueue'
@@ -108,11 +109,11 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
         onStarredOnlyChange={setStarredOnly}
       />
 
-      <div className={styles.actions}>
+      <BottomActionBar>
         <Button onClick={handleStart} disabled={filteredCount === 0}>
           開始する
         </Button>
-      </div>
+      </BottomActionBar>
     </div>
   )
 }

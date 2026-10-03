@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
+import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
 import { StarButton } from '@/components/session/StarButton'
 import { applyFlashcardLabel } from '@/domain/masteryLevel'
@@ -98,16 +99,13 @@ export default function FlashcardSessionPage() {
             </div>
           </div>
           <p className={styles.currentLevel}>現在の定着度：{MASTERY_LEVEL_LABELS[currentWord.masteryLevel]}</p>
-          <div className={styles.labelButtonsSpacer} />
-          <div className={styles.labelButtonsBar}>
-            <div className={styles.labelButtons}>
-              {MASTERY_LEVELS.map((level) => (
-                <Button key={level} variant="secondary" onClick={() => handleLabelSelect(level)}>
-                  {MASTERY_LEVEL_ICONS[level]} {MASTERY_LEVEL_LABELS[level]}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <BottomActionBar>
+            {MASTERY_LEVELS.map((level) => (
+              <Button key={level} variant="secondary" onClick={() => handleLabelSelect(level)}>
+                {MASTERY_LEVEL_ICONS[level]} {MASTERY_LEVEL_LABELS[level]}
+              </Button>
+            ))}
+          </BottomActionBar>
         </>
       )}
     </div>

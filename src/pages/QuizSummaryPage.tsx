@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
+import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { buildSessionQueue } from '@/domain/sessionQueue'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
 import { listWords } from '@/repositories/wordRepository'
@@ -59,12 +60,12 @@ export default function QuizSummaryPage() {
         ))}
       </ul>
 
-      <div className={styles.actions}>
+      <BottomActionBar>
         <Button onClick={handleRestart}>もう一度学習する</Button>
         <Button variant="secondary" onClick={() => navigate(routes.submenu(tanchouId))}>
           単語帳に戻る
         </Button>
-      </div>
+      </BottomActionBar>
     </div>
   )
 }
