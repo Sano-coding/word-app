@@ -37,7 +37,11 @@ export default function QuizSessionPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [phase, setPhase] = useState<'question' | 'feedback'>('question')
   const [answerLog, setAnswerLog] = useState<QuizAnswerLogEntry[]>([])
-  const [lastResult, setLastResult] = useState<{ isCorrect: boolean; newMasteryLevel: MasteryLevel } | null>(null)
+  const [lastResult, setLastResult] = useState<{
+    isCorrect: boolean
+    newMasteryLevel: MasteryLevel
+    selectedWordId: string
+  } | null>(null)
   const [starOverrides, setStarOverrides] = useState<Record<string, boolean>>({})
 
   const hasQueue = !!state && state.queue.length > 0
@@ -86,7 +90,7 @@ export default function QuizSessionPage() {
         correctMeaning: currentWord!.meaning,
       },
     ])
-    setLastResult({ isCorrect, newMasteryLevel })
+    setLastResult({ isCorrect, newMasteryLevel, selectedWordId: choice.word.id })
     setPhase('feedback')
   }
 
@@ -134,15 +138,20 @@ export default function QuizSessionPage() {
 
       {phase === 'feedback' && lastResult && (
         <div>
+          <h1 className={styles.resultWord}>{currentWord.word}</h1>
           <p className={lastResult.isCorrect ? styles.correct : styles.incorrect}>
             {lastResult.isCorrect ? '正解！' : '不正解'}
           </p>
           <ul className={styles.choiceResultList}>
-            {choices.map((choice, i) => (
-              <li key={i} className={choice.isCorrect ? styles.correctRow : undefined}>
-                {choice.meaning} - {choice.word.word}
-              </li>
-            ))}
+            {choices.map((choice, i) => {
+              const isSelectedWrong = !choice.isCorrect && choice.word.id === lastResult.selectedWordId
+              const rowClass = choice.isCorrect ? styles.correctRow : isSelectedWrong ? styles.incorrectRow : undefined
+              return (
+                <li key={i} className={rowClass}>
+                  {choice.meaning} - {choice.word.word}
+                </li>
+              )
+            })}
           </ul>
           <p className={styles.updatedLevel}>
             更新後の定着度：{MASTERY_LEVEL_ICONS[lastResult.newMasteryLevel]} {MASTERY_LEVEL_LABELS[lastResult.newMasteryLevel]}

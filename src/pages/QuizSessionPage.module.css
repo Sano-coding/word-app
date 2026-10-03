@@ -19,6 +19,14 @@
   margin: 20px 0 24px;
 }
 
+.resultWord {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-primary);
+  margin: 20px 0 24px;
+}
+
 .choices {
   display: flex;
   flex-direction: column;
@@ -65,7 +73,14 @@
 }
 
 .correctRow {
-  background: var(--color-primary-muted) !important;
+  background: rgba(47, 158, 68, 0.12) !important;
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.incorrectRow {
+  background: rgba(229, 72, 77, 0.12) !important;
+  color: var(--color-danger);
   font-weight: 600;
 }
 
