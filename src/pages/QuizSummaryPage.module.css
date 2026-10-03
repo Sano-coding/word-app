@@ -19,6 +19,7 @@
 
 .list li {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 10px 12px;
@@ -26,6 +27,12 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
   font-size: 0.85rem;
+}
+
+.wordGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .wordText {

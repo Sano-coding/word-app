@@ -13,6 +13,7 @@ describe('wordRepository row mapping', () => {
       flashcard_status: 'shown',
       quiz_status: 'not_shown',
       is_starred: true,
+      sort_order: 3,
       created_at: '2026-01-01T00:00:00.000Z',
     })
 
@@ -26,6 +27,7 @@ describe('wordRepository row mapping', () => {
       flashcardStatus: 'shown',
       quizStatus: 'not_shown',
       isStarred: true,
+      sortOrder: 3,
       createdAt: '2026-01-01T00:00:00.000Z',
     })
   })

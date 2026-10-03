@@ -29,6 +29,7 @@ create table if not exists public.words (
   flashcard_status text not null default 'not_shown',
   quiz_status text not null default 'not_shown',
   is_starred boolean not null default false,
+  sort_order integer not null default 0,
   created_at timestamptz not null default now()
 );
 
@@ -111,3 +112,18 @@ where t.id = sub.id and t.sort_order is null;
 
 alter table public.tanchous alter column sort_order set not null;
 alter table public.tanchous alter column sort_order set default 0;
+
+-- 2026-10-03: 単語の「登録順」が、一括登録（CSVインポート/初期シード）時に
+-- created_atが全行同一になり不安定だったため、専用のsort_orderで管理する
+alter table public.words add column if not exists sort_order integer;
+
+update public.words w
+set sort_order = sub.rn
+from (
+  select id, row_number() over (partition by tanchou_id order by created_at, id) - 1 as rn
+  from public.words
+) sub
+where w.id = sub.id and w.sort_order is null;
+
+alter table public.words alter column sort_order set not null;
+alter table public.words alter column sort_order set default 0;

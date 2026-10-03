@@ -13,6 +13,7 @@ function makeWord(partial: Partial<Word>): Word {
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
     isStarred: false,
+    sortOrder: 0,
     createdAt: new Date().toISOString(),
     ...partial,
   }

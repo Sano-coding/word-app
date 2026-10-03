@@ -14,6 +14,7 @@ function makeWord(partial: Partial<Word>): Word {
     flashcardStatus: 'not_shown',
     quizStatus: 'not_shown',
     isStarred: false,
+    sortOrder: 0,
     createdAt: '2024-01-01T00:00:00.000Z',
     ...partial,
   }

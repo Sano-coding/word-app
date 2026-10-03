@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { BottomActionBar } from '@/components/session/BottomActionBar'
+import { StarButton } from '@/components/session/StarButton'
+import { MASTERY_LEVEL_ICONS } from '@/domain/labels'
 import { buildSessionQueue } from '@/domain/sessionQueue'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
-import { listWords } from '@/repositories/wordRepository'
+import { listWords, updateWord } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
 import type { Word } from '@/types'
 import styles from './FlashcardEndPage.module.css'
@@ -41,6 +43,12 @@ export default function FlashcardEndPage() {
   const partially = sessionWords.filter((w) => w.masteryLevel === 'partially_memorized').length
   const notMemorized = sessionWords.filter((w) => w.masteryLevel === 'not_memorized').length
 
+  async function handleToggleStar(word: Word) {
+    const next = !word.isStarred
+    setSessionWords((prev) => prev && prev.map((w) => (w.id === word.id ? { ...w, isStarred: next } : w)))
+    await updateWord(word.id, { isStarred: next })
+  }
+
   async function handleRestart() {
     const words = await listWords(tanchouId!)
     const { filter, order, count } = state!.filterSnapshot
@@ -59,6 +67,20 @@ export default function FlashcardEndPage() {
         <p>少し覚えた {partially}件</p>
         <p>覚えていない {notMemorized}件</p>
       </div>
+
+      <ul className={styles.list}>
+        {sessionWords.map((w) => (
+          <li key={w.id} className={styles.listItem}>
+            <span className={styles.wordGroup}>
+              <span className={styles.wordText}>{w.word}</span>
+              <span className={styles.meaningText}>{w.meaning}</span>
+              <StarButton isStarred={w.isStarred} onToggle={() => handleToggleStar(w)} />
+            </span>
+            <span className={styles.levelIcon}>{MASTERY_LEVEL_ICONS[w.masteryLevel]}</span>
+          </li>
+        ))}
+      </ul>
+
       <BottomActionBar>
         <Button onClick={handleRestart}>もう一度学習する</Button>
         <Button variant="secondary" onClick={() => navigate(routes.submenu(tanchouId))}>

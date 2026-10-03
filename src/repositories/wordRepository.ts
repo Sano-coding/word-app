@@ -12,6 +12,7 @@ interface WordRow {
   flashcard_status: StudyStatus
   quiz_status: StudyStatus
   is_starred: boolean
+  sort_order: number
   created_at: string
 }
 
@@ -26,6 +27,7 @@ export function toWord(row: WordRow): Word {
     flashcardStatus: row.flashcard_status,
     quizStatus: row.quiz_status,
     isStarred: row.is_starred,
+    sortOrder: row.sort_order,
     createdAt: row.created_at,
   }
 }
@@ -35,11 +37,25 @@ export async function listWords(tanchouId: string): Promise<Word[]> {
     .from('words')
     .select('*')
     .eq('tanchou_id', tanchouId)
-    .order('created_at', { ascending: true })
+    .order('sort_order', { ascending: true })
   if (error) {
     throw error
   }
   return (data ?? []).map(toWord)
+}
+
+async function getNextWordSortOrder(tanchouId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('words')
+    .select('sort_order')
+    .eq('tanchou_id', tanchouId)
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error) {
+    throw error
+  }
+  return data ? data.sort_order + 1 : 0
 }
 
 export async function getWord(id: string): Promise<Word | null> {
@@ -51,6 +67,7 @@ export async function getWord(id: string): Promise<Word | null> {
 }
 
 export async function createWord(tanchouId: string, input: NewWordInput): Promise<Word> {
+  const sortOrder = await getNextWordSortOrder(tanchouId)
   const { data, error } = await supabase
     .from('words')
     .insert({
@@ -58,6 +75,7 @@ export async function createWord(tanchouId: string, input: NewWordInput): Promis
       word: input.word,
       meaning: input.meaning,
       note: input.note?.trim() ?? '',
+      sort_order: sortOrder,
     })
     .select()
     .single()
@@ -129,11 +147,13 @@ export async function bulkImportWords(tanchouId: string, plan: BulkImportPlan): 
     }
   }
   if (plan.creates.length > 0) {
-    const rows = plan.creates.map((input) => ({
+    const startOrder = await getNextWordSortOrder(tanchouId)
+    const rows = plan.creates.map((input, i) => ({
       tanchou_id: tanchouId,
       word: input.word,
       meaning: input.meaning,
       note: input.note?.trim() ?? '',
+      sort_order: startOrder + i,
     }))
     const { error } = await supabase.from('words').insert(rows)
     if (error) {

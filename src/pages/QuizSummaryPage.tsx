@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { BottomActionBar } from '@/components/session/BottomActionBar'
+import { StarButton } from '@/components/session/StarButton'
 import { buildSessionQueue } from '@/domain/sessionQueue'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
-import { listWords } from '@/repositories/wordRepository'
+import { listWords, updateWord } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
+import type { Word } from '@/types'
 import type { QuizAnswerLogEntry } from './QuizSessionPage'
 import styles from './QuizSummaryPage.module.css'
 
@@ -20,6 +22,7 @@ export default function QuizSummaryPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as SummaryState | null
+  const [wordsById, setWordsById] = useState<Record<string, Word>>({})
 
   useEffect(() => {
     if (!state && tanchouId) {
@@ -27,12 +30,27 @@ export default function QuizSummaryPage() {
     }
   }, [state, tanchouId, navigate])
 
+  useEffect(() => {
+    if (!tanchouId) return
+    listWords(tanchouId).then((all) => {
+      setWordsById(Object.fromEntries(all.map((w) => [w.id, w])))
+    })
+  }, [tanchouId])
+
   if (!tanchouId || !state) return null
 
   const { answerLog } = state
   const correctCount = answerLog.filter((a) => a.correct).length
   const total = answerLog.length
   const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0
+
+  async function handleToggleStar(wordId: string) {
+    const current = wordsById[wordId]
+    if (!current) return
+    const next = !current.isStarred
+    setWordsById((prev) => ({ ...prev, [wordId]: { ...prev[wordId], isStarred: next } }))
+    await updateWord(wordId, { isStarred: next })
+  }
 
   async function handleRestart() {
     const words = await listWords(tanchouId!)
@@ -54,7 +72,10 @@ export default function QuizSummaryPage() {
       <ul className={styles.list}>
         {answerLog.map((a, i) => (
           <li key={i} className={a.correct ? styles.correctItem : styles.incorrectItem}>
-            <span className={styles.wordText}>{a.word}</span>
+            <span className={styles.wordGroup}>
+              <span className={styles.wordText}>{a.word}</span>
+              <StarButton isStarred={wordsById[a.wordId]?.isStarred ?? false} onToggle={() => handleToggleStar(a.wordId)} />
+            </span>
             <span>{a.correct ? '正解' : `不正解（正解：${a.correctMeaning}）`}</span>
           </li>
         ))}

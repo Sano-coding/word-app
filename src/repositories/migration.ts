@@ -25,10 +25,12 @@ export async function migrateLocalDataToCloud(accountId: string, backup: LocalBa
       throw tanchouError
     }
 
-    const words = backup.words.filter((w) => w.tanchouId === tanchou.id)
+    const words = backup.words
+      .filter((w) => w.tanchouId === tanchou.id)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     if (words.length === 0) continue
 
-    const rows = words.map((w) => ({
+    const rows = words.map((w, wordIndex) => ({
       tanchou_id: tanchouRow.id,
       word: w.word,
       meaning: w.meaning,
@@ -37,6 +39,7 @@ export async function migrateLocalDataToCloud(accountId: string, backup: LocalBa
       flashcard_status: w.flashcardStatus,
       quiz_status: w.quizStatus,
       is_starred: w.isStarred,
+      sort_order: wordIndex,
     }))
     const { error: wordsError } = await supabase.from('words').insert(rows)
     if (wordsError) {

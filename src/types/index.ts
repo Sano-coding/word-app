@@ -35,6 +35,8 @@ export interface Word {
   flashcardStatus: StudyStatus
   quizStatus: StudyStatus
   isStarred: boolean
+  /** 単語リストでの表示順（登録順）。小さいほど先頭に表示される */
+  sortOrder: number
   createdAt: string
 }
 
