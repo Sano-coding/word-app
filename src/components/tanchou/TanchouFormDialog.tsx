@@ -34,10 +34,10 @@ export function TanchouFormDialog({ title, initialName = '', onSubmit, onClose }
         />
         <div className={styles.actions}>
           <Button type="submit" disabled={!valid}>
-            保存する
+            💾 保存する
           </Button>
           <Button type="button" variant="secondary" onClick={onClose}>
-            キャンセル
+            ✕ キャンセル
           </Button>
         </div>
       </form>

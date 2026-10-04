@@ -75,7 +75,7 @@ export default function FlashcardSessionPage() {
         <div className={styles.headerActions}>
           <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
           <Button variant="secondary" onClick={goToEnd}>
-            中断する
+            ⏸️ 中断する
           </Button>
         </div>
       </div>

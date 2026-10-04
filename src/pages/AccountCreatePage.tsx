@@ -75,7 +75,7 @@ export default function AccountCreatePage() {
         {saveError && <p className={styles.hint}>{saveError}</p>}
 
         <Button type="submit" disabled={!nicknameValid || submitting}>
-          はじめる
+          🚀 はじめる
         </Button>
       </form>
     </div>

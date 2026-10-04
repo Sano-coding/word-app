@@ -48,9 +48,9 @@ export default function WordListPage() {
       <div className={styles.headerRow}>
         <h1 className={styles.title}>{tanchou.name}</h1>
         <div className={styles.headerActions}>
-          <Button onClick={() => setFormState({ mode: 'create' })}>+ 単語を登録</Button>
+          <Button onClick={() => setFormState({ mode: 'create' })}>➕ 単語を登録</Button>
           <Button variant="secondary" onClick={() => setImporting(true)}>
-            CSVインポート
+            📥 CSVインポート
           </Button>
         </div>
       </div>

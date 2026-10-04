@@ -43,10 +43,10 @@ export function LocalDataMigrationBanner() {
       </p>
       <div className={styles.actions}>
         <Button type="button" onClick={handleUpload} disabled={uploading}>
-          {uploading ? 'アップロード中…' : 'アップロードする'}
+          {uploading ? '📤 アップロード中…' : '📤 アップロードする'}
         </Button>
         <Button type="button" variant="secondary" onClick={handleSkip} disabled={uploading}>
-          しない
+          ✕ しない
         </Button>
       </div>
       {error && <p className={styles.error}>{error}</p>}

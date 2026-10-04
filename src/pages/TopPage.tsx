@@ -67,7 +67,7 @@ export default function TopPage() {
     <div className="page">
       <div className={styles.headerRow}>
         <h1 className={styles.title}>単語帳</h1>
-        <Button onClick={() => setCreating(true)}>+ 新規作成</Button>
+        <Button onClick={() => setCreating(true)}>➕ 新規作成</Button>
       </div>
 
       {tanchous.length === 0 && (

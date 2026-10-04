@@ -84,17 +84,17 @@ export default function AccountSettingsPage() {
 
         <div style={{ display: 'flex', gap: 8 }}>
           <Button type="submit" disabled={!nicknameValid || submitting}>
-            保存する
+            💾 保存する
           </Button>
           <Button type="button" variant="secondary" onClick={() => navigate(routes.top)}>
-            戻る
+            ← 戻る
           </Button>
         </div>
       </form>
 
       <div style={{ marginTop: 32 }}>
         <Button type="button" variant="danger" onClick={() => supabase.auth.signOut()}>
-          ログアウト
+          🚪 ログアウト
         </Button>
       </div>
     </div>

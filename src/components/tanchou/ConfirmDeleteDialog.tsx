@@ -15,10 +15,10 @@ export function ConfirmDeleteDialog({ title, message, onConfirm, onClose }: Conf
       <p className={styles.message}>{message}</p>
       <div className={styles.actions}>
         <Button variant="danger" onClick={onConfirm}>
-          削除する
+          🗑️ 削除する
         </Button>
         <Button variant="secondary" onClick={onClose}>
-          キャンセル
+          ✕ キャンセル
         </Button>
       </div>
     </Modal>

@@ -51,10 +51,10 @@ export function WordFormModal({ mode, initialWord, onCheckDuplicate, onSubmit, o
               onSubmit({ word: word.trim(), meaning: meaning.trim(), note: note.trim() }, pendingDuplicate.id)
             }}
           >
-            上書きする
+            💾 上書きする
           </Button>
           <Button variant="secondary" onClick={() => setPendingDuplicate(null)}>
-            キャンセル
+            ✕ キャンセル
           </Button>
         </div>
       </Modal>
@@ -94,10 +94,10 @@ export function WordFormModal({ mode, initialWord, onCheckDuplicate, onSubmit, o
         </label>
         <div className={styles.actions}>
           <Button type="submit" disabled={!valid}>
-            保存する
+            💾 保存する
           </Button>
           <Button type="button" variant="secondary" onClick={onClose}>
-            キャンセル
+            ✕ キャンセル
           </Button>
         </div>
       </form>

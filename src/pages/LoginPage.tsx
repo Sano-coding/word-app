@@ -126,7 +126,7 @@ export default function LoginPage() {
 
         <div style={{ display: 'flex', gap: 8 }}>
           <Button type="submit" variant={isSignIn ? 'primary' : 'accent'} disabled={submitting}>
-            {isSignIn ? 'ログイン' : '新規登録'}
+            {isSignIn ? '🔑 ログイン' : '📝 新規登録'}
           </Button>
           <Button
             type="button"
@@ -137,7 +137,7 @@ export default function LoginPage() {
               setInfo(null)
             }}
           >
-            {isSignIn ? '新規登録はこちら' : 'ログインはこちら'}
+            {isSignIn ? '📝 新規登録はこちら' : '🔑 ログインはこちら'}
           </Button>
         </div>
       </form>

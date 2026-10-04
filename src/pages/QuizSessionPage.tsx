@@ -118,7 +118,7 @@ export default function QuizSessionPage() {
         <div className={styles.headerActions}>
           <StarButton isStarred={isStarred} onToggle={handleToggleStar} />
           <Button variant="secondary" onClick={goToSummary}>
-            中断する
+            ⏸️ 中断する
           </Button>
         </div>
       </div>
@@ -157,7 +157,7 @@ export default function QuizSessionPage() {
             更新後の定着度：{MASTERY_LEVEL_ICONS[lastResult.newMasteryLevel]} {MASTERY_LEVEL_LABELS[lastResult.newMasteryLevel]}
           </p>
           <BottomActionBar>
-            <Button onClick={handleNext}>{isLast ? '結果を見る' : '次の問題へ'}</Button>
+            <Button onClick={handleNext}>{isLast ? '📊 結果を見る' : '▶️ 次の問題へ'}</Button>
           </BottomActionBar>
         </div>
       )}

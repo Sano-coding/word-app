@@ -82,9 +82,9 @@ export default function FlashcardEndPage() {
       </ul>
 
       <BottomActionBar>
-        <Button onClick={handleRestart}>もう一度学習する</Button>
+        <Button onClick={handleRestart}>🔁 もう一度学習する</Button>
         <Button variant="secondary" onClick={() => navigate(routes.submenu(tanchouId))}>
-          単語帳に戻る
+          📚 単語帳に戻る
         </Button>
       </BottomActionBar>
     </div>

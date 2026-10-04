@@ -42,7 +42,7 @@ export default function TanchouSelectPage({ mode }: TanchouSelectPageProps) {
         <div className={styles.empty}>
           <p>まだ単語帳がありません。先に単語帳を作成してください。</p>
           <Button variant="secondary" onClick={() => navigate(routes.top)}>
-            単語帳へ
+            📚 単語帳へ
           </Button>
         </div>
       )}

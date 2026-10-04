@@ -111,7 +111,7 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
 
       <BottomActionBar>
         <Button onClick={handleStart} disabled={filteredCount === 0}>
-          開始する
+          ▶️ 開始する
         </Button>
       </BottomActionBar>
     </div>

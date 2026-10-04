@@ -114,10 +114,10 @@ export function CsvImportModal({ existingWords, onImport, onClose }: CsvImportMo
 
           <div className={styles.actions}>
             <Button onClick={handleCommit} disabled={importing}>
-              インポート実行
+              📥 インポート実行
             </Button>
             <Button variant="secondary" onClick={() => setDedupeResult(null)} disabled={importing}>
-              やり直す
+              🔄 やり直す
             </Button>
           </div>
         </div>
