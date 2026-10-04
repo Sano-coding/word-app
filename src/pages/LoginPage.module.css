@@ -30,3 +30,9 @@
   height: 1px;
   background: var(--color-border);
 }
+
+.googleButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
