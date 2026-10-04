@@ -31,6 +31,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
 
+  async function handleGoogleLogin() {
+    setError(null)
+    setInfo(null)
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
+    })
+    if (error) setError(translateAuthError(error.message))
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (submitting) return
@@ -120,6 +130,14 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
+
+      <div className={loginStyles.divider}>
+        <span>または</span>
+      </div>
+
+      <Button type="button" variant="secondary" onClick={handleGoogleLogin} disabled={submitting}>
+        Googleで続ける
+      </Button>
     </div>
   )
 }
