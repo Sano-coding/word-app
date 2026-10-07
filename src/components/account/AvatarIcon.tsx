@@ -1,4 +1,4 @@
-import { getPresetEmoji } from '@/domain/iconPresets'
+import { getPresetImage } from '@/domain/iconPresets'
 import type { IconType } from '@/types'
 import styles from './AvatarIcon.module.css'
 
@@ -23,11 +23,10 @@ export function AvatarIcon({ iconType, iconValue, size = 48 }: AvatarIconProps) 
   }
 
   if (iconType === 'preset' && iconValue) {
-    return (
-      <div className={styles.avatar} style={style}>
-        {getPresetEmoji(iconValue)}
-      </div>
-    )
+    const presetImage = getPresetImage(iconValue)
+    if (presetImage) {
+      return <img src={presetImage} alt="アイコン" className={styles.avatar} style={style} />
+    }
   }
 
   return (

@@ -74,9 +74,9 @@ export function IconPicker({ iconType, iconValue, onChange }: IconPickerProps) {
               iconType === 'preset' && iconValue === preset.key ? styles.selected : ''
             }`}
             onClick={() => onChange('preset', preset.key)}
-            aria-label={preset.key}
+            aria-label={preset.label}
           >
-            {preset.emoji}
+            <img src={preset.image} alt="" className={styles.presetImage} />
           </button>
         ))}
       </div>
