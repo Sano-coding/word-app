@@ -6,8 +6,16 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { Button } from '@/components/common/Button'
 import { ConfirmDeleteDialog } from '@/components/tanchou/ConfirmDeleteDialog'
 import { SortableTanchouCard } from '@/components/tanchou/SortableTanchouCard'
+import { StarFilterChips } from '@/components/tanchou/StarFilterChips'
+import { TanchouCard } from '@/components/tanchou/TanchouCard'
 import { TanchouFormDialog } from '@/components/tanchou/TanchouFormDialog'
 import { useAccount } from '@/context/AccountContext'
+import {
+  STAR_FILTER_EMPTY_MESSAGES,
+  countTanchousByStar,
+  filterTanchousByStar,
+} from '@/domain/tanchouFilter'
+import type { StarFilter } from '@/domain/tanchouFilter'
 import {
   createTanchou,
   deleteTanchou,
@@ -29,6 +37,7 @@ export default function TopPage() {
   const [creating, setCreating] = useState(false)
   const [renaming, setRenaming] = useState<Tanchou | null>(null)
   const [deleting, setDeleting] = useState<Tanchou | null>(null)
+  const [starFilter, setStarFilter] = useState<StarFilter>('all')
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
@@ -63,6 +72,25 @@ export default function TopPage() {
 
   if (!account) return null
 
+  const visibleTanchous = filterTanchousByStar(tanchous, starFilter)
+  const counts = countTanchousByStar(tanchous)
+
+  /** 絞り込み中はカードの並び替えを無効化するため、ドラッグ可否で2通りの描画をする */
+  function cardPropsFor(t: Tanchou) {
+    return {
+      name: t.name,
+      words: wordsByTanchou[t.id] ?? [],
+      isStarred: t.isStarred,
+      onClick: () => navigate(routes.submenu(t.id)),
+      onToggleStar: async () => {
+        await setTanchouStarred(t.id, !t.isStarred)
+        await refresh()
+      },
+      onRename: () => setRenaming(t),
+      onDelete: () => setDeleting(t),
+    }
+  }
+
   return (
     <div className="page">
       <div className={styles.headerRow}>
@@ -70,30 +98,32 @@ export default function TopPage() {
         <Button onClick={() => setCreating(true)}>➕ 新規作成</Button>
       </div>
 
-      {tanchous.length === 0 && (
-        <p className={styles.empty}>まだ単語帳がありません。「+ 新規作成」から作成しましょう。</p>
+      {tanchous.length > 0 && (
+        <StarFilterChips value={starFilter} counts={counts} onChange={setStarFilter} />
       )}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={tanchous.map((t) => t.id)} strategy={verticalListSortingStrategy}>
-          {tanchous.map((t) => (
-            <SortableTanchouCard
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              words={wordsByTanchou[t.id] ?? []}
-              isStarred={t.isStarred}
-              onClick={() => navigate(routes.submenu(t.id))}
-              onToggleStar={async () => {
-                await setTanchouStarred(t.id, !t.isStarred)
-                await refresh()
-              }}
-              onRename={() => setRenaming(t)}
-              onDelete={() => setDeleting(t)}
-            />
+      {visibleTanchous.length === 0 && (
+        <p className={styles.empty}>{STAR_FILTER_EMPTY_MESSAGES[tanchous.length === 0 ? 'all' : starFilter]}</p>
+      )}
+
+      {starFilter === 'all' ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={tanchous.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+            {tanchous.map((t) => (
+              <SortableTanchouCard key={t.id} id={t.id} {...cardPropsFor(t)} />
+            ))}
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <>
+          {visibleTanchous.length > 0 && (
+            <p className={styles.reorderHint}>絞り込み中は並び替えできません。「すべて」を選ぶと並び替えできます。</p>
+          )}
+          {visibleTanchous.map((t) => (
+            <TanchouCard key={t.id} {...cardPropsFor(t)} />
           ))}
-        </SortableContext>
-      </DndContext>
+        </>
+      )}
 
       {creating && (
         <TanchouFormDialog

@@ -1,3 +1,4 @@
+import { STARRED_ICON, UNSTARRED_ICON } from '@/domain/labels'
 import styles from './StarButton.module.css'
 
 interface StarButtonProps {
@@ -14,7 +15,7 @@ export function StarButton({ isStarred, onToggle }: StarButtonProps) {
       aria-pressed={isStarred}
       aria-label={isStarred ? 'スターを解除' : 'スターを付ける'}
     >
-      {isStarred ? '⭐' : '☆'}
+      {isStarred ? STARRED_ICON : UNSTARRED_ICON}
     </button>
   )
 }

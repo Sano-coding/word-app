@@ -15,6 +15,7 @@ export const MASTERY_LEVEL_ICONS: Record<MasteryLevel, string> = {
 export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memorized', 'memorized']
 
 export const STARRED_ICON = '⭐'
+export const UNSTARRED_ICON = '☆'
 
 export const STUDY_STATUS_LABELS: Record<StudyStatus, string> = {
   not_shown: '未出題',
