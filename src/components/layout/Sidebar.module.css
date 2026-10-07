@@ -28,7 +28,6 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 4px 8px 12px;
   border-bottom: 1px solid var(--color-border);
@@ -56,19 +55,6 @@
 .nickname {
   font-weight: 700;
   font-size: 0.9rem;
-}
-
-.closeButton {
-  font-size: 0.85rem;
-  font-weight: 700;
-  line-height: 1;
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 6px 8px;
-  cursor: pointer;
-  color: var(--color-text-muted);
-  flex-shrink: 0;
 }
 
 .navList {
@@ -117,9 +103,5 @@
     height: 100vh;
     position: sticky;
     top: 0;
-  }
-
-  .closeButton {
-    display: none;
   }
 }
