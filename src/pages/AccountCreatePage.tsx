@@ -7,7 +7,7 @@ import { useAccount } from '@/context/AccountContext'
 import { isValidNickname } from '@/domain/validation'
 import { createAccount } from '@/repositories/accountRepository'
 import { StorageQuotaError } from '@/repositories/storage'
-import { seedDefaultTanchou } from '@/repositories/tanchouRepository'
+import { seedDefaultTanchous } from '@/repositories/tanchouRepository'
 import { routes } from '@/routes'
 import type { IconType } from '@/types'
 import styles from './AccountCreatePage.module.css'
@@ -30,7 +30,7 @@ export default function AccountCreatePage() {
     setSaveError(null)
     try {
       const account = await createAccount({ nickname: nickname.trim(), iconType, iconValue })
-      await seedDefaultTanchou(account.id)
+      await seedDefaultTanchous(account.id)
       await refreshAccount()
       navigate(routes.home, { replace: true })
     } catch (err) {

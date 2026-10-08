@@ -1,4 +1,4 @@
-import { DEFAULT_TANCHOU_NAME, DEFAULT_TANCHOU_WORDS } from '@/domain/seedData'
+import { DEFAULT_TANCHOU_SEEDS } from '@/domain/seedData'
 import { supabase } from '@/lib/supabaseClient'
 import { notifyDataChanged } from './events'
 import { bulkImportWords } from './wordRepository'
@@ -106,10 +106,12 @@ export async function setTanchouStarred(id: string, isStarred: boolean): Promise
   return toTanchou(data)
 }
 
-/** 新規アカウント作成時に、お試し・チュートリアル用の単語帳を自動生成する */
-export async function seedDefaultTanchou(accountId: string): Promise<void> {
-  const tanchou = await createTanchou(accountId, DEFAULT_TANCHOU_NAME)
-  await bulkImportWords(tanchou.id, { creates: DEFAULT_TANCHOU_WORDS, updates: [] })
+/** 新規アカウント作成時に、基本情報技術者試験対策用のデフォルト単語帳（分野別）を自動生成する */
+export async function seedDefaultTanchous(accountId: string): Promise<void> {
+  for (const seed of DEFAULT_TANCHOU_SEEDS) {
+    const tanchou = await createTanchou(accountId, seed.name)
+    await bulkImportWords(tanchou.id, { creates: seed.words, updates: [] })
+  }
 }
 
 export async function deleteTanchou(id: string): Promise<void> {
