@@ -127,3 +127,105 @@ where w.id = sub.id and w.sort_order is null;
 
 alter table public.words alter column sort_order set not null;
 alter table public.words alter column sort_order set default 0;
+
+-- 2026-10-08: ダッシュボード機能用。定着度ごとの単語数を日次でスナップショットし、
+-- 推移の折れ線グラフに使う。words の insert/update/delete 時にトリガーで自動記録する
+-- （flashcard/quiz でのmastery_level変更、単語の追加・削除・CSVインポート等すべてを網羅）。
+
+create table if not exists public.mastery_snapshots (
+  account_id uuid not null references public.profiles (id) on delete cascade,
+  snapshot_date date not null,
+  not_memorized_count integer not null default 0,
+  partially_memorized_count integer not null default 0,
+  memorized_count integer not null default 0,
+  updated_at timestamptz not null default now(),
+  primary key (account_id, snapshot_date)
+);
+
+alter table public.mastery_snapshots enable row level security;
+
+create policy "mastery_snapshots_select_own" on public.mastery_snapshots
+  for select using (auth.uid() = account_id);
+
+grant usage on schema public to authenticated;
+grant select on public.mastery_snapshots to authenticated;
+
+-- security definer: words/tanchousのRLSに関係なく、トリガーから常にスナップショットを書けるようにする
+create or replace function public.record_mastery_snapshot()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_tanchou_id uuid;
+  v_account_id uuid;
+  v_not_memorized integer;
+  v_partially_memorized integer;
+  v_memorized integer;
+begin
+  v_tanchou_id := coalesce(new.tanchou_id, old.tanchou_id);
+
+  select account_id into v_account_id from public.tanchous where id = v_tanchou_id;
+  if v_account_id is null then
+    -- 単語帳ごと削除（cascade）された場合など、親行が既に無い場合はスキップ
+    return coalesce(new, old);
+  end if;
+
+  select
+    count(*) filter (where w.mastery_level = 'not_memorized'),
+    count(*) filter (where w.mastery_level = 'partially_memorized'),
+    count(*) filter (where w.mastery_level = 'memorized')
+  into v_not_memorized, v_partially_memorized, v_memorized
+  from public.words w
+  join public.tanchous t on t.id = w.tanchou_id
+  where t.account_id = v_account_id;
+
+  insert into public.mastery_snapshots (
+    account_id, snapshot_date, not_memorized_count, partially_memorized_count, memorized_count, updated_at
+  )
+  values (
+    v_account_id,
+    (now() at time zone 'Asia/Tokyo')::date,
+    v_not_memorized,
+    v_partially_memorized,
+    v_memorized,
+    now()
+  )
+  on conflict (account_id, snapshot_date)
+  do update set
+    not_memorized_count = excluded.not_memorized_count,
+    partially_memorized_count = excluded.partially_memorized_count,
+    memorized_count = excluded.memorized_count,
+    updated_at = now();
+
+  return coalesce(new, old);
+end;
+$$;
+
+drop trigger if exists words_mastery_snapshot_trigger on public.words;
+create trigger words_mastery_snapshot_trigger
+after insert or update or delete on public.words
+for each row execute function public.record_mastery_snapshot();
+
+-- 既存データ向けバックフィル: 今日時点のスナップショットを1件作成しておく
+-- （これが無いと、新規トリガー発火まで折れ線グラフに点が1つも無い状態になる）
+insert into public.mastery_snapshots (
+  account_id, snapshot_date, not_memorized_count, partially_memorized_count, memorized_count, updated_at
+)
+select
+  t.account_id,
+  (now() at time zone 'Asia/Tokyo')::date,
+  count(*) filter (where w.mastery_level = 'not_memorized'),
+  count(*) filter (where w.mastery_level = 'partially_memorized'),
+  count(*) filter (where w.mastery_level = 'memorized'),
+  now()
+from public.tanchous t
+join public.words w on w.tanchou_id = t.id
+group by t.account_id
+on conflict (account_id, snapshot_date)
+do update set
+  not_memorized_count = excluded.not_memorized_count,
+  partially_memorized_count = excluded.partially_memorized_count,
+  memorized_count = excluded.memorized_count,
+  updated_at = now();

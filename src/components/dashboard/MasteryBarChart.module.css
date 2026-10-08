@@ -1,0 +1,34 @@
+.chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.baseline {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.bar {
+  transition: opacity 0.15s ease;
+}
+
+.barGroup:hover .bar,
+.barGroup:focus-within .bar {
+  opacity: 0.82;
+}
+
+.valueLabel {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--color-text);
+}
+
+.categoryIcon {
+  font-size: 14px;
+}
+
+.categoryLabel {
+  font-size: 10.5px;
+  fill: var(--color-text-muted);
+}

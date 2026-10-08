@@ -41,3 +41,12 @@ export interface Word {
 }
 
 export type NewWordInput = Pick<Word, 'word' | 'meaning'> & { note?: string }
+
+/** 日付ごとの定着度別単語数スナップショット（ダッシュボードの推移グラフ用） */
+export interface MasterySnapshot {
+  /** YYYY-MM-DD（JST） */
+  date: string
+  notMemorized: number
+  partiallyMemorized: number
+  memorized: number
+}

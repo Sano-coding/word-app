@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { AppLayout } from '@/components/layout/AppLayout'
 import AccountCreatePage from '@/pages/AccountCreatePage'
 import AccountSettingsPage from '@/pages/AccountSettingsPage'
+import DashboardPage from '@/pages/DashboardPage'
 import FlashcardEndPage from '@/pages/FlashcardEndPage'
 import FlashcardSessionPage from '@/pages/FlashcardSessionPage'
 import HomePage from '@/pages/HomePage'
@@ -57,6 +58,7 @@ function App() {
                 <Route path={routes.home} element={<HomePage />} />
                 <Route path={routes.top} element={<TopPage />} />
                 <Route path={routes.settings} element={<AccountSettingsPage />} />
+                <Route path={routes.dashboard} element={<DashboardPage />} />
                 <Route path={routePatterns.submenu} element={<SubmenuPage />} />
                 <Route path={routePatterns.wordList} element={<WordListPage />} />
                 <Route path={routePatterns.flashcardFilter} element={<PreSessionFilterPage mode="flashcard" />} />

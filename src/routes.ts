@@ -4,6 +4,7 @@ export const routes = {
   home: '/',
   top: '/wordbooks',
   settings: '/settings',
+  dashboard: '/dashboard',
   flashcardHub: '/flashcards',
   quizHub: '/quiz',
   submenu: (tanchouId: string) => `/tanchou/${tanchouId}`,

@@ -21,6 +21,13 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => pathname === routes.home,
   },
   {
+    key: 'dashboard',
+    icon: '📊',
+    label: 'ダッシュボード',
+    path: routes.dashboard,
+    isActive: (pathname) => pathname === routes.dashboard,
+  },
+  {
     key: 'profile',
     icon: '👤',
     label: 'プロフィール',

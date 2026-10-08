@@ -14,6 +14,13 @@ export const MASTERY_LEVEL_ICONS: Record<MasteryLevel, string> = {
 
 export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memorized', 'memorized']
 
+/** ダッシュボードのグラフで使う定着度ごとの配色（状態色: 危険/警告/成功をそのまま流用） */
+export const MASTERY_LEVEL_COLORS: Record<MasteryLevel, string> = {
+  not_memorized: 'var(--color-danger)',
+  partially_memorized: 'var(--color-warning)',
+  memorized: 'var(--color-success)',
+}
+
 export const STARRED_ICON = '⭐'
 export const UNSTARRED_ICON = '☆'
 
