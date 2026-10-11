@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { AvatarIcon } from '@/components/account/AvatarIcon'
+import { useAccount } from '@/context/AccountContext'
 import { useLibraryStats } from '@/hooks/useLibraryStats'
 import { routes } from '@/routes'
 import { Sidebar } from './Sidebar'
@@ -8,7 +10,9 @@ import styles from './AppLayout.module.css'
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { tanchouCount, wordCount } = useLibraryStats()
+  const { account } = useAccount()
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const isDesktopWidth = window.matchMedia('(min-width: 768px)').matches
@@ -35,6 +39,16 @@ export function AppLayout() {
             <button type="button" className={styles.menuButton} onClick={() => setSidebarOpen(true)} aria-label="メニューを開く">
               ☰
             </button>
+            {account && (
+              <button
+                type="button"
+                className={styles.headerAvatar}
+                onClick={() => navigate(routes.settings)}
+                aria-label="アカウント設定を開く"
+              >
+                <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={32} />
+              </button>
+            )}
             <span className={styles.headerTitle}>単語帳</span>
           </div>
 

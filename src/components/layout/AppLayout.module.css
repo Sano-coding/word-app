@@ -48,6 +48,15 @@
   line-height: 1.6;
 }
 
+.headerAvatar {
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .headerTitle {
   font-weight: 700;
 }
@@ -81,7 +90,8 @@
 }
 
 @media (min-width: 768px) {
-  .menuButton {
+  .menuButton,
+  .headerAvatar {
     display: none;
   }
 
