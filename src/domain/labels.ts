@@ -14,11 +14,15 @@ export const MASTERY_LEVEL_ICONS: Record<MasteryLevel, string> = {
 
 export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memorized', 'memorized']
 
-/** ダッシュボードのグラフで使う定着度ごとの配色（状態色: 危険/警告/成功をそのまま流用） */
+/**
+ * ダッシュボードのグラフ専用の配色（2026-10-11：favorite_color.csvの傾向分析をもとに選定。
+ * 削除ボタンやエラー表示で使う danger/warning/success とは独立しているため、
+ * そちらを変更してもこの配色には影響しない）
+ */
 export const MASTERY_LEVEL_COLORS: Record<MasteryLevel, string> = {
-  not_memorized: 'var(--color-danger)',
-  partially_memorized: 'var(--color-warning)',
-  memorized: 'var(--color-success)',
+  not_memorized: '#cd5c5c',
+  partially_memorized: '#cd853f',
+  memorized: '#20b2aa',
 }
 
 export const STARRED_ICON = '⭐'
