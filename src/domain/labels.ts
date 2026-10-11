@@ -21,7 +21,7 @@ export const MASTERY_LEVELS: MasteryLevel[] = ['not_memorized', 'partially_memor
  */
 export const MASTERY_LEVEL_COLORS: Record<MasteryLevel, string> = {
   not_memorized: '#cd5c5c',
-  partially_memorized: '#cd853f',
+  partially_memorized: '#ffd700',
   memorized: '#20b2aa',
 }
 
