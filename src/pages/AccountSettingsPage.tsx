@@ -62,7 +62,7 @@ export default function AccountSettingsPage() {
   if (!account) return null
 
   return (
-    <div className="page">
+    <div className="page" data-theme-color={themeColor}>
       <h1 className={styles.title}>アカウント設定</h1>
       <p className={styles.lead}>ニックネーム・アイコンを変更できます</p>
 
@@ -109,7 +109,9 @@ export default function AccountSettingsPage() {
         <div className={styles.field}>
           <span className={styles.label}>テーマカラー</span>
           <ThemeColorPicker value={themeColor} onChange={setThemeColor} />
-          <span className={styles.subHint}>保存すると画面全体の配色が切り替わります。</span>
+          <span className={styles.subHint}>
+            選ぶとこの画面がすぐにプレビューされます。保存するとアプリ全体に反映されます。
+          </span>
         </div>
 
         {saveError && <p className={styles.hint}>{saveError}</p>}
