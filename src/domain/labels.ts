@@ -33,4 +33,9 @@ export const STUDY_STATUS_LABELS: Record<StudyStatus, string> = {
   shown: '出題済',
 }
 
+export const STUDY_STATUS_ICONS: Record<StudyStatus, string> = {
+  not_shown: '⬜',
+  shown: '✅',
+}
+
 export const STUDY_STATUSES: StudyStatus[] = ['not_shown', 'shown']

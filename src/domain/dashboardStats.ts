@@ -10,6 +10,21 @@ export function countWordsByMastery(words: Word[]): MasteryCounts {
   return counts
 }
 
+export interface StudyStatusCounts {
+  shown: number
+  notShown: number
+}
+
+export function countWordsByStudyStatus(words: Word[], key: 'flashcardStatus' | 'quizStatus'): StudyStatusCounts {
+  let shown = 0
+  let notShown = 0
+  for (const word of words) {
+    if (word[key] === 'shown') shown += 1
+    else notShown += 1
+  }
+  return { shown, notShown }
+}
+
 /** 日本時間（UTC+9固定、DSTなし）での今日の日付を YYYY-MM-DD で返す */
 export function getTodayJstDateString(now: Date = new Date()): string {
   const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
