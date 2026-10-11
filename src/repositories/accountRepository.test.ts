@@ -10,6 +10,7 @@ describe('accountRepository row mapping', () => {
       icon_value: 'cat',
       created_at: '2026-01-01T00:00:00.000Z',
       status_message: '英検準1級を目指して勉強中！',
+      theme_color: 'blue',
     })
 
     expect(account).toEqual({
@@ -19,6 +20,7 @@ describe('accountRepository row mapping', () => {
       iconValue: 'cat',
       createdAt: '2026-01-01T00:00:00.000Z',
       statusMessage: '英検準1級を目指して勉強中！',
+      themeColor: 'blue',
     })
   })
 })
