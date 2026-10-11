@@ -19,9 +19,9 @@
 
 .list li {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   padding: 10px 12px;
   border-radius: 8px;
   background: var(--color-surface);
@@ -29,11 +29,13 @@
   font-size: 0.85rem;
 }
 
-.resultGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+.resultText {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.starRow {
+  align-self: flex-end;
 }
 
 .wordText {
