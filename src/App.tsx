@@ -24,7 +24,7 @@ function AccountGate({ children }: { children: ReactNode }) {
   const { account, loading: accountLoading } = useAccount()
   const location = useLocation()
 
-  if (authLoading || accountLoading) return null
+  if (authLoading || accountLoading) return <p className="app-loading">読み込み中...</p>
 
   const isAuthRoute = location.pathname === routes.login
   const isCreateRoute = location.pathname === routes.create
