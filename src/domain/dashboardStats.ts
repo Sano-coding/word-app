@@ -1,4 +1,4 @@
-import type { MasterySnapshot, MasteryLevel, Word } from '@/types'
+import type { MasterySnapshot, MasteryLevel, Tanchou, Word } from '@/types'
 
 export type MasteryCounts = Record<MasteryLevel, number>
 
@@ -23,6 +23,40 @@ export function countWordsByStudyStatus(words: Word[], key: 'flashcardStatus' | 
     else notShown += 1
   }
   return { shown, notShown }
+}
+
+export interface TanchouActivity {
+  tanchou: Tanchou
+  shownCount: number
+}
+
+/**
+ * 単語帳ごとの「出題済み単語数」（フラッシュカード＋4択クイズの合計）が最も多いものを返す。
+ * 1件も出題されていない場合はnull。
+ */
+export function findMostActiveTanchou(tanchous: Tanchou[], wordsByTanchou: Word[][]): TanchouActivity | null {
+  let best: TanchouActivity | null = null
+  tanchous.forEach((tanchou, i) => {
+    const words = wordsByTanchou[i] ?? []
+    const shownCount = words.filter((w) => w.flashcardStatus === 'shown').length + words.filter((w) => w.quizStatus === 'shown').length
+    if (shownCount > 0 && (!best || shownCount > best.shownCount)) {
+      best = { tanchou, shownCount }
+    }
+  })
+  return best
+}
+
+/** `lastStudiedAt` が最も新しい単語帳を返す。1件も学習記録が無い場合はnull。 */
+export function findMostRecentlyStudiedTanchou(tanchous: Tanchou[]): Tanchou | null {
+  const studied = tanchous.filter((t): t is Tanchou & { lastStudiedAt: string } => t.lastStudiedAt !== null)
+  if (studied.length === 0) return null
+  return studied.reduce((latest, t) => (t.lastStudiedAt > latest.lastStudiedAt ? t : latest))
+}
+
+/** UTC ISO日時文字列を日本時間の「M/D」形式に変換する */
+export function formatJstMonthDay(isoDateTime: string): string {
+  const jst = new Date(new Date(isoDateTime).getTime() + 9 * 60 * 60 * 1000)
+  return `${jst.getUTCMonth() + 1}/${jst.getUTCDate()}`
 }
 
 /** 日本時間（UTC+9固定、DSTなし）での今日の日付を YYYY-MM-DD で返す */

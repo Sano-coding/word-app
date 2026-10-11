@@ -229,3 +229,34 @@ do update set
   partially_memorized_count = excluded.partially_memorized_count,
   memorized_count = excluded.memorized_count,
   updated_at = now();
+
+-- 2026-10-11: ダッシュボードの「単語帳の傾向」機能用。単語帳ごとの最終学習日時を記録し、
+-- フラッシュカード/4択クイズで出題（flashcard_status・quiz_statusの変更）があるたびに
+-- DBトリガーで自動更新する。過去の出題実績に対する正確な日時は無いため、バックフィルはせず
+-- NULL（未学習扱い）のままにし、次回の出題から記録を開始する。
+
+alter table public.tanchous add column if not exists last_studied_at timestamptz;
+
+create or replace function public.record_last_studied_at()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.tanchous
+  set last_studied_at = now()
+  where id = new.tanchou_id;
+  return new;
+end;
+$$;
+
+drop trigger if exists words_last_studied_at_trigger on public.words;
+create trigger words_last_studied_at_trigger
+after update on public.words
+for each row
+when (
+  new.flashcard_status is distinct from old.flashcard_status
+  or new.quiz_status is distinct from old.quiz_status
+)
+execute function public.record_last_studied_at();

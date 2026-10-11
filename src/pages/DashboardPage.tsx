@@ -2,10 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { MasteryBarChart } from '@/components/dashboard/MasteryBarChart'
 import { MasteryLineChart } from '@/components/dashboard/MasteryLineChart'
 import { StudyStatusBar } from '@/components/dashboard/StudyStatusBar'
+import { TanchouTrends } from '@/components/dashboard/TanchouTrends'
 import { useAccount } from '@/context/AccountContext'
 import {
   countWordsByMastery,
   countWordsByStudyStatus,
+  findMostActiveTanchou,
+  findMostRecentlyStudiedTanchou,
   getTodayJstDateString,
   mergeTodaySnapshot,
 } from '@/domain/dashboardStats'
@@ -19,12 +22,24 @@ import styles from './DashboardPage.module.css'
 const EMPTY_COUNTS: MasteryCounts = { not_memorized: 0, partially_memorized: 0, memorized: 0 }
 const EMPTY_STUDY_STATUS: StudyStatusCounts = { shown: 0, notShown: 0 }
 
+interface MostActive {
+  tanchouName: string
+  shownCount: number
+}
+
+interface MostRecent {
+  tanchouName: string
+  lastStudiedAt: string
+}
+
 export default function DashboardPage() {
   const { account } = useAccount()
   const [counts, setCounts] = useState<MasteryCounts>(EMPTY_COUNTS)
   const [history, setHistory] = useState<MasterySnapshot[]>([])
   const [flashcardStatus, setFlashcardStatus] = useState<StudyStatusCounts>(EMPTY_STUDY_STATUS)
   const [quizStatus, setQuizStatus] = useState<StudyStatusCounts>(EMPTY_STUDY_STATUS)
+  const [mostActive, setMostActive] = useState<MostActive | null>(null)
+  const [mostRecent, setMostRecent] = useState<MostRecent | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
@@ -39,6 +54,12 @@ export default function DashboardPage() {
     setHistory(mergeTodaySnapshot(snapshots, getTodayJstDateString(), currentCounts))
     setFlashcardStatus(countWordsByStudyStatus(words, 'flashcardStatus'))
     setQuizStatus(countWordsByStudyStatus(words, 'quizStatus'))
+
+    const active = findMostActiveTanchou(tanchous, wordLists)
+    setMostActive(active ? { tanchouName: active.tanchou.name, shownCount: active.shownCount } : null)
+    const recent = findMostRecentlyStudiedTanchou(tanchous)
+    setMostRecent(recent?.lastStudiedAt ? { tanchouName: recent.name, lastStudiedAt: recent.lastStudiedAt } : null)
+
     setLoading(false)
   }, [account])
 
@@ -60,6 +81,11 @@ export default function DashboardPage() {
         <p className={styles.empty}>まだ単語が登録されていません。単語帳に単語を追加すると、ここに定着度の状況が表示されます。</p>
       ) : (
         <>
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>単語帳の傾向</h2>
+            <TanchouTrends mostActive={mostActive} mostRecent={mostRecent} />
+          </section>
+
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>定着度の内訳</h2>
             <MasteryBarChart counts={counts} />

@@ -19,6 +19,8 @@ export interface Tanchou {
   sortOrder: number
   /** 将来の共有機能（全体公開／フレンド公開）を見据えた予約フィールド。現状は常に 'private' で、UI には一切出さない */
   visibility: 'private'
+  /** この単語帳内の単語がフラッシュカード／4択クイズで最後に出題された日時（未出題ならnull） */
+  lastStudiedAt: string | null
 }
 
 export type MasteryLevel = 'not_memorized' | 'partially_memorized' | 'memorized'

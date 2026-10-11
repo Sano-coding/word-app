@@ -11,6 +11,7 @@ function tanchou(id: string, isStarred: boolean): Tanchou {
     createdAt: '2026-10-07T00:00:00.000Z',
     sortOrder: Number(id),
     visibility: 'private',
+    lastStudiedAt: null,
   }
 }
 

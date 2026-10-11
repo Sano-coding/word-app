@@ -12,6 +12,7 @@ interface TanchouRow {
   visibility: string
   sort_order: number
   created_at: string
+  last_studied_at: string | null
 }
 
 export function toTanchou(row: TanchouRow): Tanchou {
@@ -23,6 +24,7 @@ export function toTanchou(row: TanchouRow): Tanchou {
     createdAt: row.created_at,
     sortOrder: row.sort_order,
     visibility: row.visibility as Tanchou['visibility'],
+    lastStudiedAt: row.last_studied_at,
   }
 }
 

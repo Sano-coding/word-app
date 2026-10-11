@@ -11,6 +11,7 @@ describe('tanchouRepository row mapping', () => {
       visibility: 'private',
       sort_order: 2,
       created_at: '2026-01-01T00:00:00.000Z',
+      last_studied_at: '2026-01-02T00:00:00.000Z',
     })
 
     expect(tanchou).toEqual({
@@ -21,6 +22,7 @@ describe('tanchouRepository row mapping', () => {
       createdAt: '2026-01-01T00:00:00.000Z',
       sortOrder: 2,
       visibility: 'private',
+      lastStudiedAt: '2026-01-02T00:00:00.000Z',
     })
   })
 })
