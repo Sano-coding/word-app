@@ -1,5 +1,7 @@
 export type IconType = 'default' | 'preset' | 'custom'
 
+export type ThemeColor = 'default' | 'blue' | 'green' | 'warm' | 'pink' | 'plain'
+
 export interface Account {
   id: string
   nickname: string
@@ -9,6 +11,7 @@ export interface Account {
   createdAt: string
   /** 任意項目。フレンド一覧に表示される一言 */
   statusMessage: string | null
+  themeColor: ThemeColor
 }
 
 export interface Tanchou {

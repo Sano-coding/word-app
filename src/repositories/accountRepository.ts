@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabaseClient'
-import type { Account, IconType } from '@/types'
+import type { Account, IconType, ThemeColor } from '@/types'
 
 interface ProfileRow {
   id: string
@@ -8,6 +8,7 @@ interface ProfileRow {
   icon_value: string | null
   created_at: string
   status_message: string | null
+  theme_color: ThemeColor
 }
 
 export function toAccount(row: ProfileRow): Account {
@@ -18,6 +19,7 @@ export function toAccount(row: ProfileRow): Account {
     iconValue: row.icon_value,
     createdAt: row.created_at,
     statusMessage: row.status_message,
+    themeColor: row.theme_color,
   }
 }
 
@@ -73,6 +75,7 @@ export interface UpdateAccountInput {
   iconType: IconType
   iconValue: string | null
   statusMessage: string | null
+  themeColor: ThemeColor
 }
 
 export async function updateAccount(input: UpdateAccountInput): Promise<Account> {
@@ -87,6 +90,7 @@ export async function updateAccount(input: UpdateAccountInput): Promise<Account>
       icon_type: input.iconType,
       icon_value: input.iconValue,
       status_message: input.statusMessage,
+      theme_color: input.themeColor,
     })
     .eq('id', userId)
     .select()

@@ -3,13 +3,14 @@ import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { IconPicker } from '@/components/account/IconPicker'
+import { ThemeColorPicker } from '@/components/account/ThemeColorPicker'
 import { useAccount } from '@/context/AccountContext'
 import { STATUS_MESSAGE_MAX_LENGTH, isValidNickname, isValidStatusMessage } from '@/domain/validation'
 import { supabase } from '@/lib/supabaseClient'
 import { updateAccount } from '@/repositories/accountRepository'
 import { StorageQuotaError } from '@/repositories/storage'
 import { routes } from '@/routes'
-import type { IconType } from '@/types'
+import type { IconType, ThemeColor } from '@/types'
 import styles from '../pages/AccountCreatePage.module.css'
 
 export default function AccountSettingsPage() {
@@ -19,6 +20,7 @@ export default function AccountSettingsPage() {
   const [iconType, setIconType] = useState<IconType>('default')
   const [iconValue, setIconValue] = useState<string | null>(null)
   const [statusMessage, setStatusMessage] = useState('')
+  const [themeColor, setThemeColor] = useState<ThemeColor>('default')
   const [submitting, setSubmitting] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -28,6 +30,7 @@ export default function AccountSettingsPage() {
       setIconType(account.iconType)
       setIconValue(account.iconValue)
       setStatusMessage(account.statusMessage ?? '')
+      setThemeColor(account.themeColor)
     }
   }, [account])
 
@@ -46,6 +49,7 @@ export default function AccountSettingsPage() {
         iconType,
         iconValue,
         statusMessage: trimmedStatusMessage === '' ? null : trimmedStatusMessage,
+        themeColor,
       })
       await refreshAccount()
       navigate(routes.top)
@@ -100,6 +104,12 @@ export default function AccountSettingsPage() {
               setIconValue(value)
             }}
           />
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>テーマカラー</span>
+          <ThemeColorPicker value={themeColor} onChange={setThemeColor} />
+          <span className={styles.subHint}>保存すると画面全体の配色が切り替わります。</span>
         </div>
 
         {saveError && <p className={styles.hint}>{saveError}</p>}

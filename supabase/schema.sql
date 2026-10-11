@@ -398,3 +398,11 @@ as $$
 $$;
 
 grant execute on function public.list_my_friendships() to authenticated;
+
+-- 2026-10-12: プロフィール設定で選べるテーマカラー（プリセット6色）。
+-- 配色の実体（CSS変数）はフロント側のtokens.cssで管理し、ここでは選択値だけ保持する。
+alter table public.profiles add column if not exists theme_color text not null default 'default';
+
+alter table public.profiles drop constraint if exists profiles_theme_color_check;
+alter table public.profiles add constraint profiles_theme_color_check
+  check (theme_color in ('default', 'blue', 'green', 'warm', 'pink', 'plain'));

@@ -32,6 +32,10 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     refreshAccount().finally(() => setLoading(false))
   }, [authLoading, refreshAccount])
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme-color', account?.themeColor ?? 'default')
+  }, [account])
+
   return (
     <AccountContext.Provider value={{ account, loading, refreshAccount }}>{children}</AccountContext.Provider>
   )

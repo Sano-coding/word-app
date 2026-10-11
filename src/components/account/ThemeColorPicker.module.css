@@ -1,0 +1,28 @@
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.swatch.selected {
+  border: 2px solid var(--color-primary);
+}
+
+.check {
+  color: #fff;
+  mix-blend-mode: difference;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
