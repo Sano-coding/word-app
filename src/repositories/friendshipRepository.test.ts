@@ -13,6 +13,7 @@ describe('friendshipRepository row mapping', () => {
       other_nickname: 'たぬきち',
       other_icon_type: 'preset',
       other_icon_value: 'red-panda',
+      other_status_message: '英検準1級を目指して勉強中！',
     })
 
     expect(friendship).toEqual({
@@ -25,6 +26,7 @@ describe('friendshipRepository row mapping', () => {
       otherNickname: 'たぬきち',
       otherIconType: 'preset',
       otherIconValue: 'red-panda',
+      otherStatusMessage: '英検準1級を目指して勉強中！',
     })
   })
 })

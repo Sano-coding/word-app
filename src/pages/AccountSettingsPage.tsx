@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { IconPicker } from '@/components/account/IconPicker'
 import { useAccount } from '@/context/AccountContext'
-import { isValidNickname } from '@/domain/validation'
+import { STATUS_MESSAGE_MAX_LENGTH, isValidNickname, isValidStatusMessage } from '@/domain/validation'
 import { supabase } from '@/lib/supabaseClient'
 import { updateAccount } from '@/repositories/accountRepository'
 import { StorageQuotaError } from '@/repositories/storage'
@@ -18,6 +18,7 @@ export default function AccountSettingsPage() {
   const [nickname, setNickname] = useState('')
   const [iconType, setIconType] = useState<IconType>('default')
   const [iconValue, setIconValue] = useState<string | null>(null)
+  const [statusMessage, setStatusMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -26,18 +27,26 @@ export default function AccountSettingsPage() {
       setNickname(account.nickname)
       setIconType(account.iconType)
       setIconValue(account.iconValue)
+      setStatusMessage(account.statusMessage ?? '')
     }
   }, [account])
 
   const nicknameValid = isValidNickname(nickname)
+  const statusMessageValid = isValidStatusMessage(statusMessage)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!nicknameValid || submitting) return
+    if (!nicknameValid || !statusMessageValid || submitting) return
     setSubmitting(true)
     setSaveError(null)
     try {
-      await updateAccount({ nickname: nickname.trim(), iconType, iconValue })
+      const trimmedStatusMessage = statusMessage.trim()
+      await updateAccount({
+        nickname: nickname.trim(),
+        iconType,
+        iconValue,
+        statusMessage: trimmedStatusMessage === '' ? null : trimmedStatusMessage,
+      })
       await refreshAccount()
       navigate(routes.top)
     } catch (err) {
@@ -68,6 +77,19 @@ export default function AccountSettingsPage() {
           )}
         </label>
 
+        <label className={styles.field}>
+          <span className={styles.label}>ひとこと</span>
+          <input
+            type="text"
+            value={statusMessage}
+            onChange={(e) => setStatusMessage(e.target.value)}
+            className={styles.input}
+            placeholder="例）英検準1級を目指して勉強中！"
+            maxLength={STATUS_MESSAGE_MAX_LENGTH}
+          />
+          <span className={styles.subHint}>任意項目です。フレンド一覧に表示されます。</span>
+        </label>
+
         <div className={styles.field}>
           <span className={styles.label}>アイコン</span>
           <IconPicker
@@ -83,7 +105,7 @@ export default function AccountSettingsPage() {
         {saveError && <p className={styles.hint}>{saveError}</p>}
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button type="submit" disabled={!nicknameValid || submitting}>
+          <Button type="submit" disabled={!nicknameValid || !statusMessageValid || submitting}>
             💾 保存する
           </Button>
           <Button type="button" variant="secondary" onClick={() => navigate(routes.top)}>

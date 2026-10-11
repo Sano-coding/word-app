@@ -353,3 +353,48 @@ as $$
 $$;
 
 grant execute on function public.list_my_friendships() to authenticated;
+
+-- 2026-10-11: プロフィールの「ひとこと」ステータスメッセージ。任意項目。
+-- フレンド一覧にのみ表示する（検索結果・申請一覧には表示しない）。
+alter table public.profiles add column if not exists status_message text;
+
+-- list_my_friendships の戻り値に other_status_message を追加。
+-- RETURNS TABLE の列構成はCREATE OR REPLACEでは変更できないため、drop してから再作成する。
+drop function if exists public.list_my_friendships();
+
+create function public.list_my_friendships()
+returns table (
+  friendship_id uuid,
+  status text,
+  direction text,
+  created_at timestamptz,
+  responded_at timestamptz,
+  other_id uuid,
+  other_nickname text,
+  other_icon_type text,
+  other_icon_value text,
+  other_status_message text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    f.id,
+    f.status,
+    case when f.requester_id = auth.uid() then 'outgoing' else 'incoming' end,
+    f.created_at,
+    f.responded_at,
+    case when f.requester_id = auth.uid() then f.recipient_id else f.requester_id end,
+    p.nickname,
+    p.icon_type,
+    p.icon_value,
+    p.status_message
+  from public.friendships f
+  join public.profiles p
+    on p.id = case when f.requester_id = auth.uid() then f.recipient_id else f.requester_id end
+  where f.requester_id = auth.uid() or f.recipient_id = auth.uid()
+  order by f.created_at desc
+$$;
+
+grant execute on function public.list_my_friendships() to authenticated;

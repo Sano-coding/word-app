@@ -11,6 +11,7 @@ interface FriendshipRpcRow {
   other_nickname: string
   other_icon_type: string
   other_icon_value: string | null
+  other_status_message: string | null
 }
 
 export function toFriendship(row: FriendshipRpcRow): Friendship {
@@ -24,6 +25,7 @@ export function toFriendship(row: FriendshipRpcRow): Friendship {
     otherNickname: row.other_nickname,
     otherIconType: row.other_icon_type as IconType,
     otherIconValue: row.other_icon_value,
+    otherStatusMessage: row.other_status_message,
   }
 }
 

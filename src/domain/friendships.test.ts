@@ -13,6 +13,7 @@ function makeFriendship(overrides: Partial<Friendship>): Friendship {
     otherNickname: 'たぬきち',
     otherIconType: 'default',
     otherIconValue: null,
+    otherStatusMessage: null,
     ...overrides,
   }
 }

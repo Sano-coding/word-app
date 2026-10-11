@@ -51,7 +51,10 @@ export default function FriendListPage() {
           {friends.map((friendship) => (
             <li key={friendship.id} className={styles.row}>
               <AvatarIcon iconType={friendship.otherIconType} iconValue={friendship.otherIconValue} size={40} />
-              <span className={styles.name}>{friendship.otherNickname}</span>
+              <div className={styles.nameBlock}>
+                <p className={styles.name}>{friendship.otherNickname}</p>
+                {friendship.otherStatusMessage && <p className={styles.status}>{friendship.otherStatusMessage}</p>}
+              </div>
               <button
                 type="button"
                 className={styles.removeButton}

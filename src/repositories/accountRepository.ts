@@ -7,6 +7,7 @@ interface ProfileRow {
   icon_type: IconType
   icon_value: string | null
   created_at: string
+  status_message: string | null
 }
 
 export function toAccount(row: ProfileRow): Account {
@@ -16,6 +17,7 @@ export function toAccount(row: ProfileRow): Account {
     iconType: row.icon_type,
     iconValue: row.icon_value,
     createdAt: row.created_at,
+    statusMessage: row.status_message,
   }
 }
 
@@ -70,6 +72,7 @@ export interface UpdateAccountInput {
   nickname: string
   iconType: IconType
   iconValue: string | null
+  statusMessage: string | null
 }
 
 export async function updateAccount(input: UpdateAccountInput): Promise<Account> {
@@ -83,6 +86,7 @@ export async function updateAccount(input: UpdateAccountInput): Promise<Account>
       nickname: input.nickname,
       icon_type: input.iconType,
       icon_value: input.iconValue,
+      status_message: input.statusMessage,
     })
     .eq('id', userId)
     .select()

@@ -7,6 +7,8 @@ export interface Account {
   /** preset の場合はプリセットキー、custom の場合は圧縮済み画像の dataURL */
   iconValue: string | null
   createdAt: string
+  /** 任意項目。フレンド一覧に表示される一言 */
+  statusMessage: string | null
 }
 
 export interface Tanchou {
@@ -68,6 +70,7 @@ export interface Friendship {
   otherNickname: string
   otherIconType: IconType
   otherIconValue: string | null
+  otherStatusMessage: string | null
 }
 
 export interface ProfileSearchResult {
