@@ -84,7 +84,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {account && (
         <div className={styles.header}>
           <button type="button" className={styles.identity} onClick={() => handleNavigate(routes.settings)}>
-            <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={36} />
+            <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={44} />
             <span className={styles.nickname}>{account.nickname}</span>
           </button>
         </div>

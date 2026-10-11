@@ -46,7 +46,7 @@ export function AppLayout() {
                 onClick={() => navigate(routes.settings)}
                 aria-label="アカウント設定を開く"
               >
-                <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={32} />
+                <AvatarIcon iconType={account.iconType} iconValue={account.iconValue} size={44} />
               </button>
             )}
             <span className={styles.headerTitle}>単語帳</span>
