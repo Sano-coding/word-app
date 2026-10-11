@@ -109,9 +109,7 @@ export default function AccountSettingsPage() {
         <div className={styles.field}>
           <span className={styles.label}>テーマカラー</span>
           <ThemeColorPicker value={themeColor} onChange={setThemeColor} />
-          <span className={styles.subHint}>
-            選ぶとこの画面がすぐにプレビューされます。保存するとアプリ全体に反映されます。
-          </span>
+          <span className={styles.subHint}>保存するとアプリ全体に反映されます。</span>
         </div>
 
         {saveError && <p className={styles.hint}>{saveError}</p>}
