@@ -1,4 +1,5 @@
 import { StarButton } from '@/components/session/StarButton'
+import { MASTERY_LEVEL_ICONS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
 import type { Word } from '@/types'
 import type { HTMLAttributes } from 'react'
 import styles from './TanchouCard.module.css'
@@ -51,7 +52,21 @@ export function TanchouCard({
         <span className={styles.count}>{words.length}単語</span>
         {words.length > 0 && (
           <span className={styles.breakdown}>
-            覚えた {memorized} ／ 少し覚えた {partially} ／ 覚えていない {notMemorized}
+            <span
+              className={styles.badgeNotMemorized}
+              aria-label={`${MASTERY_LEVEL_LABELS.not_memorized} ${notMemorized}件`}
+            >
+              {MASTERY_LEVEL_ICONS.not_memorized} {notMemorized}
+            </span>
+            <span
+              className={styles.badgePartially}
+              aria-label={`${MASTERY_LEVEL_LABELS.partially_memorized} ${partially}件`}
+            >
+              {MASTERY_LEVEL_ICONS.partially_memorized} {partially}
+            </span>
+            <span className={styles.badgeMemorized} aria-label={`${MASTERY_LEVEL_LABELS.memorized} ${memorized}件`}>
+              {MASTERY_LEVEL_ICONS.memorized} {memorized}
+            </span>
           </span>
         )}
       </button>
