@@ -21,7 +21,7 @@ export function WordTableRow({ word, onUpdate, onEdit, onDelete }: WordTableRowP
           {word.word}
         </button>
       </td>
-      <td className={styles.meaningCell}>{word.meaning}</td>
+      <td>{word.meaning}</td>
       <td className={styles.noteCell}>
         {word.note ? (
           <>

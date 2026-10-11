@@ -78,10 +78,6 @@
   vertical-align: bottom;
 }
 
-.meaningCell {
-  font-size: 0.72rem;
-}
-
 .noteCell {
   text-align: center;
   color: var(--color-text-muted);
