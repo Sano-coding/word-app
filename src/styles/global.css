@@ -43,6 +43,8 @@ a:focus-visible {
   max-width: 640px;
   margin: 0 auto;
   padding: 20px 16px 80px;
+  min-height: 100%;
+  background: var(--color-bg);
 }
 
 .app-loading {
