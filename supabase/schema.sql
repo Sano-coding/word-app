@@ -260,3 +260,96 @@ when (
   or new.quiz_status is distinct from old.quiz_status
 )
 execute function public.record_last_studied_at();
+
+-- 2026-10-11: フレンド機能。申請中(pending)とフレンド(accepted)を1テーブルで管理する
+-- （承認時にstatusが変わるだけで、別テーブルへの移動が不要なため）。
+
+create table public.friendships (
+  id uuid primary key default gen_random_uuid(),
+  requester_id uuid not null references public.profiles (id) on delete cascade,
+  recipient_id uuid not null references public.profiles (id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending', 'accepted')),
+  created_at timestamptz not null default now(),
+  responded_at timestamptz,
+  constraint friendships_no_self check (requester_id <> recipient_id),
+  constraint friendships_unique_pair unique (requester_id, recipient_id)
+);
+
+create index friendships_recipient_id_idx on public.friendships (recipient_id);
+
+alter table public.friendships enable row level security;
+
+-- 自分が関係者（申請した/された）の行だけ見える
+create policy "friendships_select_related" on public.friendships
+  for select using (auth.uid() = requester_id or auth.uid() = recipient_id);
+
+-- 申請は本人が requester として送るのみ
+create policy "friendships_insert_own" on public.friendships
+  for insert with check (auth.uid() = requester_id);
+
+-- 承認（status更新）は recipient のみ可能
+create policy "friendships_update_recipient" on public.friendships
+  for update using (auth.uid() = recipient_id) with check (auth.uid() = recipient_id);
+
+-- 削除（キャンセル/拒否/フレンド解除）は関係者どちらからも可能
+create policy "friendships_delete_related" on public.friendships
+  for delete using (auth.uid() = requester_id or auth.uid() = recipient_id);
+
+grant select, insert, update, delete on public.friendships to authenticated;
+
+-- フレンド検索用。profilesテーブル自体のSELECTポリシー（本人のみ）は変更せず、
+-- 検索に必要な最小限の列（ニックネーム・アイコン）だけをRPC経由で返す。
+create or replace function public.search_profiles(query text)
+returns table (id uuid, nickname text, icon_type text, icon_value text)
+language sql
+security definer
+set search_path = public
+as $$
+  select id, nickname, icon_type, icon_value
+  from public.profiles
+  where nickname ilike '%' || query || '%'
+    and id <> auth.uid()
+  order by nickname
+  limit 20
+$$;
+
+grant execute on function public.search_profiles(text) to authenticated;
+
+-- 自分が関係者となっている friendships 一覧を、相手のプロフィール情報付きで返す。
+-- 相手のprofilesはRLS上読めないため、security definerのRPCで解決する。
+-- （フレンド一覧／受信した申請／送信した申請は、このRPCの結果をstatus・directionで
+-- 振り分けて表示する。検索結果が既に申請済み/フレンドかどうかの判定にも使う）
+create or replace function public.list_my_friendships()
+returns table (
+  friendship_id uuid,
+  status text,
+  direction text,
+  created_at timestamptz,
+  responded_at timestamptz,
+  other_id uuid,
+  other_nickname text,
+  other_icon_type text,
+  other_icon_value text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    f.id,
+    f.status,
+    case when f.requester_id = auth.uid() then 'outgoing' else 'incoming' end,
+    f.created_at,
+    f.responded_at,
+    case when f.requester_id = auth.uid() then f.recipient_id else f.requester_id end,
+    p.nickname,
+    p.icon_type,
+    p.icon_value
+  from public.friendships f
+  join public.profiles p
+    on p.id = case when f.requester_id = auth.uid() then f.recipient_id else f.requester_id end
+  where f.requester_id = auth.uid() or f.recipient_id = auth.uid()
+  order by f.created_at desc
+$$;
+
+grant execute on function public.list_my_friendships() to authenticated;

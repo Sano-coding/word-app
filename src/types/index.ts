@@ -52,3 +52,27 @@ export interface MasterySnapshot {
   partiallyMemorized: number
   memorized: number
 }
+
+export type FriendshipStatus = 'pending' | 'accepted'
+/** 自分が requester（送った側）か recipient（受け取った側）か */
+export type FriendshipDirection = 'outgoing' | 'incoming'
+
+/** 自分を主語にした friendships 1行（相手のプロフィール情報込み） */
+export interface Friendship {
+  id: string
+  status: FriendshipStatus
+  direction: FriendshipDirection
+  createdAt: string
+  respondedAt: string | null
+  otherId: string
+  otherNickname: string
+  otherIconType: IconType
+  otherIconValue: string | null
+}
+
+export interface ProfileSearchResult {
+  id: string
+  nickname: string
+  iconType: IconType
+  iconValue: string | null
+}

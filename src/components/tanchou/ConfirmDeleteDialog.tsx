@@ -5,17 +5,24 @@ import styles from './ConfirmDeleteDialog.module.css'
 interface ConfirmDeleteDialogProps {
   title: string
   message: string
+  confirmLabel?: string
   onConfirm: () => void
   onClose: () => void
 }
 
-export function ConfirmDeleteDialog({ title, message, onConfirm, onClose }: ConfirmDeleteDialogProps) {
+export function ConfirmDeleteDialog({
+  title,
+  message,
+  confirmLabel = '🗑️ 削除する',
+  onConfirm,
+  onClose,
+}: ConfirmDeleteDialogProps) {
   return (
     <Modal title={title} onClose={onClose}>
       <p className={styles.message}>{message}</p>
       <div className={styles.actions}>
         <Button variant="danger" onClick={onConfirm}>
-          🗑️ 削除する
+          {confirmLabel}
         </Button>
         <Button variant="secondary" onClick={onClose}>
           ✕ キャンセル

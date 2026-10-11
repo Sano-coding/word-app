@@ -5,6 +5,8 @@ export const routes = {
   top: '/wordbooks',
   settings: '/settings',
   dashboard: '/dashboard',
+  friends: '/friends',
+  friendRequests: '/friends/requests',
   flashcardHub: '/flashcards',
   quizHub: '/quiz',
   submenu: (tanchouId: string) => `/tanchou/${tanchouId}`,

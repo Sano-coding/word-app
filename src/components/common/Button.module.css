@@ -37,3 +37,8 @@
   background: var(--color-accent);
   color: #fff;
 }
+
+.success {
+  background: var(--color-success);
+  color: #fff;
+}

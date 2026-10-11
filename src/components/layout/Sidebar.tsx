@@ -35,6 +35,13 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => pathname === routes.settings,
   },
   {
+    key: 'friends',
+    icon: '👥',
+    label: 'フレンド',
+    path: routes.friends,
+    isActive: (pathname) => pathname === routes.friends || pathname === routes.friendRequests,
+  },
+  {
     key: 'wordbooks',
     icon: '📚',
     label: '単語帳',
