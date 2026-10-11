@@ -40,44 +40,46 @@ export default function AccountCreatePage() {
   }
 
   return (
-    <div className="page">
-      <h1 className={styles.title}>単語帳へようこそ</h1>
-      <p className={styles.lead}>ニックネームとアイコンを設定してはじめましょう</p>
+    <div className={styles.wrapper}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>単語帳へようこそ</h1>
+        <p className={styles.lead}>ニックネームとアイコンを設定してはじめましょう</p>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.field}>
-          <span className={styles.label}>ニックネーム</span>
-          <input
-            type="text"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            placeholder="例）たなか"
-            className={styles.input}
-            maxLength={40}
-          />
-          {!nicknameValid && nickname.length > 0 && (
-            <span className={styles.hint}>1〜20文字で入力してください</span>
-          )}
-        </label>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label className={styles.field}>
+            <span className={styles.label}>ニックネーム</span>
+            <input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="例）たなか"
+              className={styles.input}
+              maxLength={40}
+            />
+            {!nicknameValid && nickname.length > 0 && (
+              <span className={styles.hint}>1〜20文字で入力してください</span>
+            )}
+          </label>
 
-        <div className={styles.field}>
-          <span className={styles.label}>アイコン</span>
-          <IconPicker
-            iconType={iconType}
-            iconValue={iconValue}
-            onChange={(type, value) => {
-              setIconType(type)
-              setIconValue(value)
-            }}
-          />
-        </div>
+          <div className={styles.field}>
+            <span className={styles.label}>アイコン</span>
+            <IconPicker
+              iconType={iconType}
+              iconValue={iconValue}
+              onChange={(type, value) => {
+                setIconType(type)
+                setIconValue(value)
+              }}
+            />
+          </div>
 
-        {saveError && <p className={styles.hint}>{saveError}</p>}
+          {saveError && <p className={styles.hint}>{saveError}</p>}
 
-        <Button type="submit" disabled={!nicknameValid || submitting}>
-          🚀 はじめる
-        </Button>
-      </form>
+          <Button type="submit" disabled={!nicknameValid || submitting}>
+            🚀 はじめる
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }

@@ -79,83 +79,85 @@ export default function LoginPage() {
   const isSignIn = mode === 'signIn'
 
   return (
-    <div className="page">
-      <h1 className={`${styles.title} ${loginStyles.titleRow}`}>
-        <span className={loginStyles.titleIcon}>📚</span>単語帳
-      </h1>
-      <p className={styles.lead}>
-        {isSignIn ? (
-          <>
-            <span className={loginStyles.underline}>ログイン</span>してはじめましょう
-          </>
-        ) : (
-          <>
-            <span className={loginStyles.underline}>新規登録</span>してはじめましょう
-          </>
-        )}
-      </p>
+    <div className={loginStyles.wrapper}>
+      <div className={loginStyles.card}>
+        <h1 className={`${styles.title} ${loginStyles.titleRow}`}>
+          <span className={loginStyles.titleIcon}>📚</span>単語帳
+        </h1>
+        <p className={styles.lead}>
+          {isSignIn ? (
+            <>
+              <span className={loginStyles.underline}>ログイン</span>してはじめましょう
+            </>
+          ) : (
+            <>
+              <span className={loginStyles.underline}>新規登録</span>してはじめましょう
+            </>
+          )}
+        </p>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.field}>
-          <span className={styles.label}>メールアドレス</span>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
-            required
-            autoComplete="email"
-          />
-        </label>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label className={styles.field}>
+            <span className={styles.label}>メールアドレス</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={styles.input}
+              required
+              autoComplete="email"
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span className={styles.label}>パスワード</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-            minLength={6}
-            autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
-          />
-        </label>
+          <label className={styles.field}>
+            <span className={styles.label}>パスワード</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles.input}
+              required
+              minLength={6}
+              autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
+            />
+          </label>
 
-        {error && <p className={styles.hint}>{error}</p>}
-        {info && <p className={styles.label}>{info}</p>}
+          {error && <p className={styles.hint}>{error}</p>}
+          {info && <p className={styles.label}>{info}</p>}
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Button type="submit" variant={isSignIn ? 'primary' : 'accent'} disabled={submitting}>
-            {isSignIn ? '🔑 ログイン' : '📝 新規登録'}
-          </Button>
-          <Button
-            type="button"
-            variant={isSignIn ? 'accent' : 'primary'}
-            onClick={() => {
-              setMode(isSignIn ? 'signUp' : 'signIn')
-              setError(null)
-              setInfo(null)
-            }}
-          >
-            {isSignIn ? '📝 新規登録はこちら' : '🔑 ログインはこちら'}
-          </Button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button type="submit" variant={isSignIn ? 'primary' : 'accent'} disabled={submitting}>
+              {isSignIn ? '🔑 ログイン' : '📝 新規登録'}
+            </Button>
+            <Button
+              type="button"
+              variant={isSignIn ? 'accent' : 'primary'}
+              onClick={() => {
+                setMode(isSignIn ? 'signUp' : 'signIn')
+                setError(null)
+                setInfo(null)
+              }}
+            >
+              {isSignIn ? '📝 新規登録はこちら' : '🔑 ログインはこちら'}
+            </Button>
+          </div>
+        </form>
+
+        <div className={loginStyles.divider}>
+          <span>または</span>
         </div>
-      </form>
 
-      <div className={loginStyles.divider}>
-        <span>または</span>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleGoogleLogin}
+          disabled={submitting}
+          className={loginStyles.googleButton}
+        >
+          <GoogleIcon />
+          Googleで続ける
+        </Button>
       </div>
-
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={handleGoogleLogin}
-        disabled={submitting}
-        className={loginStyles.googleButton}
-      >
-        <GoogleIcon />
-        Googleで続ける
-      </Button>
     </div>
   )
 }
