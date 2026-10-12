@@ -4,8 +4,9 @@ import { routes } from '@/routes'
 import styles from './HomePage.module.css'
 
 const UPDATES = [
+  'フレンド機能を実装しました',
+  'テーマカラーを変更できるようになりました',
   '単語・単語帳に⭐スター機能を追加しました',
-  'サイドバーから直接フラッシュカード・4択クイズを始められるようになりました',
 ]
 
 const TUTORIAL_ITEMS = [

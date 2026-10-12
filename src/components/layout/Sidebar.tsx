@@ -21,6 +21,15 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => pathname === routes.home,
   },
   {
+    key: 'wordbooks',
+    icon: '📚',
+    label: '単語帳',
+    path: routes.top,
+    isActive: (pathname) =>
+      pathname === routes.top ||
+      /^\/tanchou\/[^/]+(\/words|\/flashcard(\/.*)?|\/quiz(\/.*)?)?$/.test(pathname),
+  },
+  {
     key: 'dashboard',
     icon: '📊',
     label: 'ダッシュボード',
@@ -40,27 +49,6 @@ const NAV_ITEMS: NavItem[] = [
     label: 'フレンド',
     path: routes.friends,
     isActive: (pathname) => pathname === routes.friends || pathname === routes.friendRequests,
-  },
-  {
-    key: 'wordbooks',
-    icon: '📚',
-    label: '単語帳',
-    path: routes.top,
-    isActive: (pathname) => pathname === routes.top || /^\/tanchou\/[^/]+(\/words)?$/.test(pathname),
-  },
-  {
-    key: 'flashcard',
-    icon: '🃏',
-    label: 'フラッシュカード',
-    path: routes.flashcardHub,
-    isActive: (pathname) => pathname === routes.flashcardHub || /^\/tanchou\/[^/]+\/flashcard$/.test(pathname),
-  },
-  {
-    key: 'quiz',
-    icon: '❓',
-    label: '4択クイズ',
-    path: routes.quizHub,
-    isActive: (pathname) => pathname === routes.quizHub || /^\/tanchou\/[^/]+\/quiz$/.test(pathname),
   },
 ]
 
