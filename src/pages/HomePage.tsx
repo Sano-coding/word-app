@@ -6,7 +6,6 @@ import styles from './HomePage.module.css'
 const UPDATES = [
   'フレンド機能を実装しました',
   'テーマカラーを変更できるようになりました',
-  '単語・単語帳に⭐スター機能を追加しました',
 ]
 
 const TUTORIAL_ITEMS = [
