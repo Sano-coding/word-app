@@ -72,8 +72,10 @@ export default function QuizSummaryPage() {
       <ul className={styles.list}>
         {answerLog.map((a, i) => (
           <li key={i} className={a.correct ? styles.correctItem : styles.incorrectItem}>
-            <span className={styles.wordText}>{a.word}</span>
-            <span className={styles.resultText}>{a.correct ? '正解' : `不正解（正解：${a.correctMeaning}）`}</span>
+            <span className={styles.textGroup}>
+              <span className={styles.wordText}>{a.word}</span>
+              <span className={styles.resultText}>{a.correct ? '正解' : `不正解（正解：${a.correctMeaning}）`}</span>
+            </span>
             <span className={styles.starRow}>
               <StarButton isStarred={wordsById[a.wordId]?.isStarred ?? false} onToggle={() => handleToggleStar(a.wordId)} />
             </span>
