@@ -32,14 +32,26 @@
   gap: 8px;
 }
 
+.hint {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
 .row {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
   padding: 12px;
+  border: none;
   border-radius: var(--radius);
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .nameBlock {
@@ -48,6 +60,7 @@
 }
 
 .name {
+  display: block;
   margin: 0;
   font-size: 0.95rem;
   font-weight: 700;
@@ -58,6 +71,7 @@
 }
 
 .status {
+  display: block;
   margin: 2px 0 0;
   font-size: 0.78rem;
   color: var(--color-text-muted);
@@ -66,12 +80,8 @@
   text-overflow: ellipsis;
 }
 
-.removeButton {
+.chevron {
   flex-shrink: 0;
-  background: none;
-  border: none;
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--color-text-muted);
-  padding: 6px;
-  cursor: pointer;
 }

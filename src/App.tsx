@@ -8,6 +8,7 @@ import AccountSettingsPage from '@/pages/AccountSettingsPage'
 import DashboardPage from '@/pages/DashboardPage'
 import FlashcardEndPage from '@/pages/FlashcardEndPage'
 import FlashcardSessionPage from '@/pages/FlashcardSessionPage'
+import FriendDashboardPage from '@/pages/FriendDashboardPage'
 import FriendListPage from '@/pages/FriendListPage'
 import FriendRequestsPage from '@/pages/FriendRequestsPage'
 import HomePage from '@/pages/HomePage'
@@ -63,6 +64,7 @@ function App() {
                 <Route path={routes.dashboard} element={<DashboardPage />} />
                 <Route path={routes.friends} element={<FriendListPage />} />
                 <Route path={routes.friendRequests} element={<FriendRequestsPage />} />
+                <Route path={routePatterns.friendDashboard} element={<FriendDashboardPage />} />
                 <Route path={routePatterns.submenu} element={<SubmenuPage />} />
                 <Route path={routePatterns.wordList} element={<WordListPage />} />
                 <Route path={routePatterns.flashcardFilter} element={<PreSessionFilterPage mode="flashcard" />} />

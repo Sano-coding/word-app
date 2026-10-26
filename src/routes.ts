@@ -7,6 +7,7 @@ export const routes = {
   dashboard: '/dashboard',
   friends: '/friends',
   friendRequests: '/friends/requests',
+  friendDashboard: (friendId: string) => `/friends/${friendId}`,
   flashcardHub: '/flashcards',
   quizHub: '/quiz',
   submenu: (tanchouId: string) => `/tanchou/${tanchouId}`,
@@ -20,6 +21,7 @@ export const routes = {
 } as const
 
 export const routePatterns = {
+  friendDashboard: '/friends/:friendId',
   submenu: '/tanchou/:tanchouId',
   wordList: '/tanchou/:tanchouId/words',
   flashcardFilter: '/tanchou/:tanchouId/flashcard',

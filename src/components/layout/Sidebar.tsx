@@ -48,7 +48,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: '👥',
     label: 'フレンド',
     path: routes.friends,
-    isActive: (pathname) => pathname === routes.friends || pathname === routes.friendRequests,
+    isActive: (pathname) => pathname === routes.friends || pathname.startsWith(`${routes.friends}/`),
   },
 ]
 
