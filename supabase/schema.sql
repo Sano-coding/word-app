@@ -406,3 +406,79 @@ alter table public.profiles add column if not exists theme_color text not null d
 alter table public.profiles drop constraint if exists profiles_theme_color_check;
 alter table public.profiles add constraint profiles_theme_color_check
   check (theme_color in ('default', 'blue', 'green', 'warm', 'pink', 'plain'));
+
+-- 2026-10-26: フレンドのダッシュボード閲覧機能。
+-- 本人がアカウント設定でON/OFFでき、初期値はON（フレンドに公開）。
+alter table public.profiles add column if not exists dashboard_public boolean not null default true;
+
+-- フレンド（accepted）のダッシュボード表示に必要なデータを返す。
+-- tanchous/words/mastery_snapshots のRLS（本人のみ）は変更せず、security definerで
+-- フレンド関係と公開設定を確認したうえで、集計に必要な最小限の列だけを返す
+-- （単語の本文・意味・補足は返さない）。相手が非公開なら is_public=false のみ返す。
+create or replace function public.get_friend_dashboard(friend_id uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  friend_is_public boolean;
+begin
+  if not exists (
+    select 1 from public.friendships f
+    where f.status = 'accepted'
+      and (
+        (f.requester_id = auth.uid() and f.recipient_id = friend_id)
+        or (f.recipient_id = auth.uid() and f.requester_id = friend_id)
+      )
+  ) then
+    raise exception 'not friends' using errcode = '42501';
+  end if;
+
+  select p.dashboard_public into friend_is_public from public.profiles p where p.id = friend_id;
+  if not coalesce(friend_is_public, false) then
+    return jsonb_build_object('is_public', false);
+  end if;
+
+  return jsonb_build_object(
+    'is_public', true,
+    'tanchous', coalesce((
+      select jsonb_agg(
+        jsonb_build_object(
+          'name', t.name,
+          'last_studied_at', t.last_studied_at,
+          'words', coalesce((
+            select jsonb_agg(jsonb_build_object(
+              'mastery_level', w.mastery_level,
+              'flashcard_status', w.flashcard_status,
+              'quiz_status', w.quiz_status
+            ))
+            from public.words w
+            where w.tanchou_id = t.id
+          ), '[]'::jsonb)
+        )
+        order by t.sort_order
+      )
+      from public.tanchous t
+      where t.account_id = friend_id
+    ), '[]'::jsonb),
+    'snapshots', coalesce((
+      select jsonb_agg(
+        jsonb_build_object(
+          'snapshot_date', s.snapshot_date,
+          'not_memorized_count', s.not_memorized_count,
+          'partially_memorized_count', s.partially_memorized_count,
+          'memorized_count', s.memorized_count
+        )
+        order by s.snapshot_date
+      )
+      from public.mastery_snapshots s
+      where s.account_id = friend_id
+    ), '[]'::jsonb)
+  );
+end;
+$$;
+
+revoke execute on function public.get_friend_dashboard(uuid) from public, anon;
+grant execute on function public.get_friend_dashboard(uuid) to authenticated;
