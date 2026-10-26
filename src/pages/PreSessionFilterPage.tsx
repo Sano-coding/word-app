@@ -3,8 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { FilterControls } from '@/components/session/FilterControls'
+import { QUIZ_MODE_DESCRIPTIONS, QUIZ_MODE_ICONS, QUIZ_MODE_LABELS } from '@/domain/labels'
+import { QUIZ_MODES } from '@/domain/quizLogic'
+import type { QuizMode } from '@/domain/quizLogic'
 import { buildSessionQueue, filterWords } from '@/domain/sessionQueue'
 import type { FilterSnapshot, SessionOrder } from '@/domain/sessionQueue'
+import { loadQuizMode, saveQuizMode } from '@/repositories/quizModePreference'
 import { listWords } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
 import type { MasteryLevel, StudyStatus, Word } from '@/types'
@@ -23,6 +27,7 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
   const [starredOnly, setStarredOnly] = useState(false)
   const [order, setOrder] = useState<SessionOrder>('registration')
   const [count, setCount] = useState(10)
+  const [quizMode, setQuizMode] = useState<QuizMode>(loadQuizMode)
 
   const statusField = mode === 'flashcard' ? 'flashcardStatus' : 'quizStatus'
 
@@ -44,7 +49,8 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
     if (mode === 'flashcard') {
       navigate(routes.flashcardSession(tanchouId!), { state: { queue, filterSnapshot } })
     } else {
-      navigate(routes.quizSession(tanchouId!), { state: { queue, filterSnapshot } })
+      saveQuizMode(quizMode)
+      navigate(routes.quizSession(tanchouId!), { state: { queue, filterSnapshot, quizMode } })
     }
   }
 
@@ -54,6 +60,33 @@ export default function PreSessionFilterPage({ mode }: PreSessionFilterPageProps
         ← 戻る
       </Button>
       <h1 className={styles.title}>{mode === 'flashcard' ? 'フラッシュカード' : '4択クイズ'}の設定</h1>
+
+      {mode === 'quiz' && (
+        <section className={styles.quizModeSection}>
+          <span className={styles.label}>出題形式</span>
+          <div className={styles.quizModeOptions}>
+            {QUIZ_MODES.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`${styles.quizModeButton} ${quizMode === option ? styles.orderButtonSelected : ''}`}
+                onClick={() => setQuizMode(option)}
+                aria-pressed={quizMode === option}
+              >
+                <span className={styles.quizModeIcon} aria-hidden="true">
+                  {QUIZ_MODE_ICONS[option]}
+                </span>
+                {QUIZ_MODE_LABELS[option]}
+              </button>
+            ))}
+          </div>
+          <p className={styles.hint}>
+            {QUIZ_MODE_DESCRIPTIONS[quizMode]}
+            <br />
+            前回選んだ形式が初期表示されます。
+          </p>
+        </section>
+      )}
 
       <div className={styles.row}>
         <span className={styles.label}>出題順</span>

@@ -3,6 +3,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { StarButton } from '@/components/session/StarButton'
+import { QUIZ_MODE_LABELS } from '@/domain/labels'
+import type { QuizMode } from '@/domain/quizLogic'
 import { buildSessionQueue } from '@/domain/sessionQueue'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
 import { listWords, updateWord } from '@/repositories/wordRepository'
@@ -15,6 +17,13 @@ interface SummaryState {
   answerLog: QuizAnswerLogEntry[]
   wordIds: string[]
   filterSnapshot: FilterSnapshot
+  quizMode?: QuizMode
+}
+
+/** 意味→単語の正解時は、見出しが意味なので答えの単語も添える */
+function formatResult(entry: QuizAnswerLogEntry): string {
+  if (!entry.correct) return `不正解（正解：${entry.correctAnswer}）`
+  return entry.direction === 'meaning_to_word' ? `正解（${entry.correctAnswer}）` : '正解'
 }
 
 export default function QuizSummaryPage() {
@@ -40,6 +49,7 @@ export default function QuizSummaryPage() {
   if (!tanchouId || !state) return null
 
   const { answerLog } = state
+  const quizMode: QuizMode = state.quizMode ?? 'word_to_meaning'
   const correctCount = answerLog.filter((a) => a.correct).length
   const total = answerLog.length
   const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0
@@ -58,7 +68,7 @@ export default function QuizSummaryPage() {
     const queue = buildSessionQueue(words, filter, 'quizStatus', order, count)
     navigate(routes.quizSession(tanchouId!), {
       replace: true,
-      state: { queue, filterSnapshot: state!.filterSnapshot },
+      state: { queue, filterSnapshot: state!.filterSnapshot, quizMode },
     })
   }
 
@@ -73,8 +83,9 @@ export default function QuizSummaryPage() {
         {answerLog.map((a, i) => (
           <li key={i} className={a.correct ? styles.correctItem : styles.incorrectItem}>
             <span className={styles.textGroup}>
-              <span className={styles.wordText}>{a.word}</span>
-              <span className={styles.resultText}>{a.correct ? '正解' : `不正解（正解：${a.correctMeaning}）`}</span>
+              {quizMode === 'mix' && <span className={styles.directionBadge}>{QUIZ_MODE_LABELS[a.direction]}</span>}
+              <span className={styles.wordText}>{a.prompt}</span>
+              <span className={styles.resultText}>{formatResult(a)}</span>
             </span>
             <span className={styles.starRow}>
               <StarButton isStarred={wordsById[a.wordId]?.isStarred ?? false} onToggle={() => handleToggleStar(a.wordId)} />

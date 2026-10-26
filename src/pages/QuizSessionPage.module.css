@@ -19,12 +19,36 @@
   margin: 20px 0 24px;
 }
 
-.resultWord {
-  font-size: 1.8rem;
+.meaningPrompt {
+  font-size: 1.4rem;
   font-weight: 700;
+  line-height: 1.5;
   text-align: center;
+  overflow-wrap: anywhere;
+  margin: 4px 0 24px;
+}
+
+.resultPrompt {
   color: var(--color-primary);
-  margin: 20px 0 24px;
+}
+
+.promptLabel {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.directionBadge {
+  display: block;
+  width: fit-content;
+  margin: 16px auto 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .choices {
