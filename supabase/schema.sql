@@ -482,3 +482,18 @@ $$;
 
 revoke execute on function public.get_friend_dashboard(uuid) from public, anon;
 grant execute on function public.get_friend_dashboard(uuid) to authenticated;
+
+-- 2026-10-26: security definer 関数をログイン前（anon）から呼べないようにする。
+-- Postgresは関数作成時に PUBLIC へ EXECUTE を付与するため、anon もそれを継承していた。
+-- RPCとして使う関数は authenticated のみに残す。
+revoke execute on function public.search_profiles(text) from public, anon;
+grant execute on function public.search_profiles(text) to authenticated;
+revoke execute on function public.list_my_friendships() from public, anon;
+grant execute on function public.list_my_friendships() to authenticated;
+
+-- トリガー関数はRPCとして呼ばれる想定がないため、どのロールからも直接実行できないようにする
+-- （EXECUTE権限はトリガー作成時にのみ確認され、発火時には不要なのでトリガー動作には影響しない）。
+-- rls_auto_enable はこのファイル外（Supabase側）で作成された、新規テーブルにRLSを自動で有効化するイベントトリガー関数。
+revoke execute on function public.record_mastery_snapshot() from public, anon, authenticated;
+revoke execute on function public.record_last_studied_at() from public, anon, authenticated;
+revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
