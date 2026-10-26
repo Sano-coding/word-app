@@ -4,6 +4,7 @@ import { routes } from '@/routes'
 import styles from './HomePage.module.css'
 
 const UPDATES = [
+  'フレンドのダッシュボードを見られるようになりました（アカウント設定で公開をOFFにできます）',
   'フレンド機能を実装しました',
   'テーマカラーを変更できるようになりました',
 ]
