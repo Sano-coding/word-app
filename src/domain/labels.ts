@@ -1,3 +1,4 @@
+import type { QuizMode } from './quizLogic'
 import type { MasteryLevel, StudyStatus } from '@/types'
 
 export const MASTERY_LEVEL_LABELS: Record<MasteryLevel, string> = {
@@ -39,3 +40,22 @@ export const STUDY_STATUS_ICONS: Record<StudyStatus, string> = {
 }
 
 export const STUDY_STATUSES: StudyStatus[] = ['not_shown', 'shown']
+
+export const QUIZ_MODE_LABELS: Record<QuizMode, string> = {
+  word_to_meaning: '単語 → 意味',
+  meaning_to_word: '意味 → 単語',
+  mix: 'ミックス',
+}
+
+/** 出題形式ボタンのアイコン（「A」が単語、「あ」が意味を表す） */
+export const QUIZ_MODE_ICONS: Record<QuizMode, string> = {
+  word_to_meaning: 'A→あ',
+  meaning_to_word: 'あ→A',
+  mix: 'A⇄あ',
+}
+
+export const QUIZ_MODE_DESCRIPTIONS: Record<QuizMode, string> = {
+  word_to_meaning: '単語を見て、正しい意味を4つから選びます。',
+  meaning_to_word: '意味を見て、正しい単語を4つから選びます。',
+  mix: '1問ごとに「単語 → 意味」と「意味 → 単語」をランダムに出題します。',
+}
