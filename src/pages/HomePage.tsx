@@ -4,6 +4,7 @@ import { routes } from '@/routes'
 import styles from './HomePage.module.css'
 
 const UPDATES = [
+  '4択クイズで「意味 → 単語」と「ミックス」の出題形式を選べるようになりました',
   'フレンドのダッシュボードを見られるようになりました（アカウント設定で公開をOFFにできます）',
   'フレンド機能を実装しました',
   'テーマカラーを変更できるようになりました',
