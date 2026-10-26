@@ -106,6 +106,14 @@
   background: var(--color-bg);
 }
 
+/* .quizModeButton が後に定義されているため、選択中の見た目をここで優先させる */
+.quizModeButton.orderButtonSelected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 .quizModeIcon {
   font-size: 0.85rem;
   font-weight: 700;
