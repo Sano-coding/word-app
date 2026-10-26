@@ -11,6 +11,7 @@ describe('accountRepository row mapping', () => {
       created_at: '2026-01-01T00:00:00.000Z',
       status_message: '英検準1級を目指して勉強中！',
       theme_color: 'blue',
+      dashboard_public: false,
     })
 
     expect(account).toEqual({
@@ -21,6 +22,7 @@ describe('accountRepository row mapping', () => {
       createdAt: '2026-01-01T00:00:00.000Z',
       statusMessage: '英検準1級を目指して勉強中！',
       themeColor: 'blue',
+      dashboardPublic: false,
     })
   })
 })

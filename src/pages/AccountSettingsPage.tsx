@@ -21,6 +21,7 @@ export default function AccountSettingsPage() {
   const [iconValue, setIconValue] = useState<string | null>(null)
   const [statusMessage, setStatusMessage] = useState('')
   const [themeColor, setThemeColor] = useState<ThemeColor>('default')
+  const [dashboardPublic, setDashboardPublic] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -31,6 +32,7 @@ export default function AccountSettingsPage() {
       setIconValue(account.iconValue)
       setStatusMessage(account.statusMessage ?? '')
       setThemeColor(account.themeColor)
+      setDashboardPublic(account.dashboardPublic)
     }
   }, [account])
 
@@ -50,6 +52,7 @@ export default function AccountSettingsPage() {
         iconValue,
         statusMessage: trimmedStatusMessage === '' ? null : trimmedStatusMessage,
         themeColor,
+        dashboardPublic,
       })
       await refreshAccount()
       navigate(routes.top)
@@ -110,6 +113,24 @@ export default function AccountSettingsPage() {
           <span className={styles.label}>テーマカラー</span>
           <ThemeColorPicker value={themeColor} onChange={setThemeColor} />
           <span className={styles.subHint}>保存するとアプリ全体に反映されます。</span>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>公開設定</span>
+          <label className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>ダッシュボードをフレンドに公開する</span>
+            <input
+              type="checkbox"
+              role="switch"
+              className={styles.switchInput}
+              checked={dashboardPublic}
+              onChange={(e) => setDashboardPublic(e.target.checked)}
+            />
+            <span className={styles.switchTrack} aria-hidden="true" />
+          </label>
+          <span className={styles.subHint}>
+            ONにすると、フレンドがあなたの定着度・出題状況・単語帳の名前を見られます。単語の中身は公開されません。
+          </span>
         </div>
 
         {saveError && <p className={styles.hint}>{saveError}</p>}

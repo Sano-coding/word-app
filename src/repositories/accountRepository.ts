@@ -9,6 +9,7 @@ interface ProfileRow {
   created_at: string
   status_message: string | null
   theme_color: ThemeColor
+  dashboard_public: boolean
 }
 
 export function toAccount(row: ProfileRow): Account {
@@ -20,6 +21,7 @@ export function toAccount(row: ProfileRow): Account {
     createdAt: row.created_at,
     statusMessage: row.status_message,
     themeColor: row.theme_color,
+    dashboardPublic: row.dashboard_public,
   }
 }
 
@@ -76,6 +78,7 @@ export interface UpdateAccountInput {
   iconValue: string | null
   statusMessage: string | null
   themeColor: ThemeColor
+  dashboardPublic: boolean
 }
 
 export async function updateAccount(input: UpdateAccountInput): Promise<Account> {
@@ -91,6 +94,7 @@ export async function updateAccount(input: UpdateAccountInput): Promise<Account>
       icon_value: input.iconValue,
       status_message: input.statusMessage,
       theme_color: input.themeColor,
+      dashboard_public: input.dashboardPublic,
     })
     .eq('id', userId)
     .select()

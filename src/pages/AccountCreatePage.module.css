@@ -58,3 +58,59 @@
   color: var(--color-text-muted);
   font-size: 0.8rem;
 }
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.toggleLabel {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.switchInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switchTrack {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 30px;
+  border-radius: 15px;
+  background: var(--color-border);
+  transition: background 0.2s;
+}
+
+.switchTrack::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: left 0.2s;
+}
+
+.switchInput:checked + .switchTrack {
+  background: var(--color-primary);
+}
+
+.switchInput:checked + .switchTrack::after {
+  left: 23px;
+}
+
+.switchInput:focus-visible + .switchTrack {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

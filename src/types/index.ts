@@ -12,6 +12,8 @@ export interface Account {
   /** 任意項目。フレンド一覧に表示される一言 */
   statusMessage: string | null
   themeColor: ThemeColor
+  /** ダッシュボードをフレンドに公開するか（初期値は公開） */
+  dashboardPublic: boolean
 }
 
 export interface Tanchou {
@@ -75,6 +77,18 @@ export interface Friendship {
   otherIconValue: string | null
   otherStatusMessage: string | null
 }
+
+/** フレンドのダッシュボード用の単語帳（単語は集計に必要な状態のみで、本文・意味は含まない） */
+export interface FriendDashboardTanchou {
+  name: string
+  lastStudiedAt: string | null
+  words: Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus'>[]
+}
+
+/** フレンドのダッシュボード。相手が非公開に設定している場合は isPublic: false のみ */
+export type FriendDashboard =
+  | { isPublic: false }
+  | { isPublic: true; tanchous: FriendDashboardTanchou[]; snapshots: MasterySnapshot[] }
 
 export interface ProfileSearchResult {
   id: string
