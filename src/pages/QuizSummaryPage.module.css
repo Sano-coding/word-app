@@ -57,3 +57,13 @@
   color: var(--color-danger);
 }
 
+
+.directionBadge {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+}

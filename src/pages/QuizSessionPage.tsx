@@ -4,10 +4,10 @@ import { Button } from '@/components/common/Button'
 import { BottomActionBar } from '@/components/session/BottomActionBar'
 import { ProgressIndicator } from '@/components/session/ProgressIndicator'
 import { StarButton } from '@/components/session/StarButton'
-import { MASTERY_LEVEL_ICONS, MASTERY_LEVEL_LABELS } from '@/domain/labels'
+import { MASTERY_LEVEL_ICONS, MASTERY_LEVEL_LABELS, QUIZ_MODE_LABELS } from '@/domain/labels'
 import { applyQuizAnswer } from '@/domain/masteryLevel'
-import { evaluateQuizAnswer, generateChoices } from '@/domain/quizLogic'
-import type { QuizChoice } from '@/domain/quizLogic'
+import { evaluateQuizAnswer, generateChoices, getQuizAnswerText, getQuizPrompt, pickQuizDirection } from '@/domain/quizLogic'
+import type { QuizChoice, QuizDirection, QuizMode } from '@/domain/quizLogic'
 import type { FilterSnapshot } from '@/domain/sessionQueue'
 import { listWords, updateWord } from '@/repositories/wordRepository'
 import { routes } from '@/routes'
@@ -17,14 +17,18 @@ import styles from './QuizSessionPage.module.css'
 interface SessionState {
   queue: Word[]
   filterSnapshot: FilterSnapshot
+  /** 出題形式。履歴から戻った古いstateなど、無い場合は従来の単語→意味として扱う */
+  quizMode?: QuizMode
 }
 
 export interface QuizAnswerLogEntry {
   wordId: string
-  word: string
+  direction: QuizDirection
+  /** 問題として表示した文字列（単語→意味なら単語、意味→単語なら意味） */
+  prompt: string
   correct: boolean
-  selectedMeaning: string
-  correctMeaning: string
+  selectedAnswer: string
+  correctAnswer: string
 }
 
 export default function QuizSessionPage() {
@@ -45,6 +49,9 @@ export default function QuizSessionPage() {
   const [starOverrides, setStarOverrides] = useState<Record<string, boolean>>({})
 
   const hasQueue = !!state && state.queue.length > 0
+  const quizMode: QuizMode = state?.quizMode ?? 'word_to_meaning'
+  // ミックスでも描画のたびに向きが変わらないよう、セッション開始時に全問分を決めておく
+  const [directions] = useState<QuizDirection[]>(() => (state?.queue ?? []).map(() => pickQuizDirection(quizMode)))
 
   useEffect(() => {
     if (!tanchouId) return
@@ -58,17 +65,21 @@ export default function QuizSessionPage() {
   }, [hasQueue, tanchouId, navigate])
 
   const currentWord = hasQueue ? state!.queue[currentIndex] : null
+  const direction = directions[currentIndex] ?? 'word_to_meaning'
 
   const choices = useMemo<QuizChoice[]>(() => {
     if (!currentWord || !allWords) return []
-    return generateChoices(currentWord, allWords)
-  }, [currentWord, allWords])
+    return generateChoices(currentWord, allWords, direction)
+  }, [currentWord, allWords, direction])
 
   if (!tanchouId || !hasQueue || !currentWord || !allWords) return null
 
   const { queue, filterSnapshot } = state!
   const isLast = currentIndex === queue.length - 1
   const isStarred = starOverrides[currentWord.id] ?? currentWord.isStarred
+  const prompt = getQuizPrompt(currentWord, direction)
+  const promptClass = direction === 'meaning_to_word' ? styles.meaningPrompt : styles.word
+  const directionBadge = quizMode === 'mix' && <span className={styles.directionBadge}>{QUIZ_MODE_LABELS[direction]}</span>
 
   async function handleToggleStar() {
     const next = !isStarred
@@ -84,10 +95,11 @@ export default function QuizSessionPage() {
       ...log,
       {
         wordId: currentWord!.id,
-        word: currentWord!.word,
+        direction,
+        prompt,
         correct: isCorrect,
-        selectedMeaning: choice.meaning,
-        correctMeaning: currentWord!.meaning,
+        selectedAnswer: choice.text,
+        correctAnswer: getQuizAnswerText(currentWord!, direction),
       },
     ])
     setLastResult({ isCorrect, newMasteryLevel, selectedWordId: choice.word.id })
@@ -97,7 +109,7 @@ export default function QuizSessionPage() {
   function goToSummary() {
     navigate(routes.quizSummary(tanchouId!), {
       replace: true,
-      state: { answerLog, wordIds: queue.map((w) => w.id), filterSnapshot },
+      state: { answerLog, wordIds: queue.map((w) => w.id), filterSnapshot, quizMode },
     })
   }
 
@@ -125,11 +137,13 @@ export default function QuizSessionPage() {
 
       {phase === 'question' && (
         <div>
-          <h1 className={styles.word}>{currentWord.word}</h1>
+          {directionBadge}
+          {direction === 'meaning_to_word' && <p className={styles.promptLabel}>この意味の単語はどれ？</p>}
+          <h1 className={promptClass}>{prompt}</h1>
           <div className={styles.choices}>
             {choices.map((choice, i) => (
               <button key={i} type="button" className={styles.choiceButton} onClick={() => handleSelect(choice)}>
-                {choice.meaning}
+                {choice.text}
               </button>
             ))}
           </div>
@@ -138,7 +152,8 @@ export default function QuizSessionPage() {
 
       {phase === 'feedback' && lastResult && (
         <div>
-          <h1 className={styles.resultWord}>{currentWord.word}</h1>
+          {directionBadge}
+          <h1 className={`${promptClass} ${styles.resultPrompt}`}>{prompt}</h1>
           <p className={lastResult.isCorrect ? styles.correct : styles.incorrect}>
             {lastResult.isCorrect ? '正解！' : '不正解'}
           </p>
@@ -148,7 +163,9 @@ export default function QuizSessionPage() {
               const rowClass = choice.isCorrect ? styles.correctRow : isSelectedWrong ? styles.incorrectRow : undefined
               return (
                 <li key={i} className={rowClass}>
-                  {choice.meaning} - {choice.word.word}
+                  {direction === 'meaning_to_word'
+                    ? `${choice.word.word} - ${choice.word.meaning}`
+                    : `${choice.word.meaning} - ${choice.word.word}`}
                 </li>
               )
             })}
