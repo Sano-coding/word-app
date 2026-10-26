@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeNiceYAxisMax, countWordsByMastery, getTodayJstDateString, mergeTodaySnapshot } from './dashboardStats'
+import { buildDashboardData, computeNiceYAxisMax, countWordsByMastery, getTodayJstDateString, mergeTodaySnapshot } from './dashboardStats'
 import type { Word } from '@/types'
 
 function makeWord(masteryLevel: Word['masteryLevel']): Word {
@@ -74,5 +74,36 @@ describe('computeNiceYAxisMax', () => {
 
   it('falls back to a small fixed scale when there is no data', () => {
     expect(computeNiceYAxisMax(0)).toEqual({ max: 5, step: 1.25 })
+  })
+})
+
+describe('buildDashboardData', () => {
+  it('aggregates counts, study status and tanchou trends from minimal word states', () => {
+    const tanchous = [
+      { name: 'A', lastStudiedAt: '2026-10-20T00:00:00.000Z' },
+      { name: 'B', lastStudiedAt: '2026-10-25T00:00:00.000Z' },
+    ]
+    const wordsByTanchou = [
+      [
+        { masteryLevel: 'memorized' as const, flashcardStatus: 'shown' as const, quizStatus: 'shown' as const },
+        { masteryLevel: 'not_memorized' as const, flashcardStatus: 'shown' as const, quizStatus: 'not_shown' as const },
+      ],
+      [{ masteryLevel: 'partially_memorized' as const, flashcardStatus: 'not_shown' as const, quizStatus: 'shown' as const }],
+    ]
+
+    const data = buildDashboardData(tanchous, wordsByTanchou, [], '2026-10-26')
+
+    expect(data.counts).toEqual({ not_memorized: 1, partially_memorized: 1, memorized: 1 })
+    expect(data.flashcardStatus).toEqual({ shown: 2, notShown: 1 })
+    expect(data.quizStatus).toEqual({ shown: 2, notShown: 1 })
+    expect(data.mostActive).toEqual({ tanchouName: 'A', shownCount: 3 })
+    expect(data.mostRecent).toEqual({ tanchouName: 'B', lastStudiedAt: '2026-10-25T00:00:00.000Z' })
+    expect(data.history).toEqual([{ date: '2026-10-26', notMemorized: 1, partiallyMemorized: 1, memorized: 1 }])
+  })
+
+  it('returns null trends when nothing has been studied', () => {
+    const data = buildDashboardData([{ name: 'A', lastStudiedAt: null }], [[]], [], '2026-10-26')
+    expect(data.mostActive).toBeNull()
+    expect(data.mostRecent).toBeNull()
   })
 })

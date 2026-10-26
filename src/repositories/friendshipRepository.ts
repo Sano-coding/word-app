@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabaseClient'
-import type { Friendship, IconType, ProfileSearchResult } from '@/types'
+import { toMasterySnapshot } from './masterySnapshotRepository'
+import type { MasterySnapshotRow } from './masterySnapshotRepository'
+import type { Friendship, FriendDashboard, IconType, MasteryLevel, ProfileSearchResult, StudyStatus } from '@/types'
 
 interface FriendshipRpcRow {
   friendship_id: string
@@ -80,4 +82,42 @@ export async function removeFriendship(friendshipId: string): Promise<void> {
   if (error) {
     throw error
   }
+}
+
+interface FriendDashboardRpcResult {
+  is_public: boolean
+  tanchous?: {
+    name: string
+    last_studied_at: string | null
+    words: { mastery_level: MasteryLevel; flashcard_status: StudyStatus; quiz_status: StudyStatus }[]
+  }[]
+  snapshots?: MasterySnapshotRow[]
+}
+
+export function toFriendDashboard(result: FriendDashboardRpcResult): FriendDashboard {
+  if (!result.is_public) {
+    return { isPublic: false }
+  }
+  return {
+    isPublic: true,
+    tanchous: (result.tanchous ?? []).map((t) => ({
+      name: t.name,
+      lastStudiedAt: t.last_studied_at,
+      words: t.words.map((w) => ({
+        masteryLevel: w.mastery_level,
+        flashcardStatus: w.flashcard_status,
+        quizStatus: w.quiz_status,
+      })),
+    })),
+    snapshots: (result.snapshots ?? []).map(toMasterySnapshot),
+  }
+}
+
+/** フレンド（承認済み）のダッシュボード用データを取得する。フレンドでない相手を指定するとエラー */
+export async function getFriendDashboard(friendId: string): Promise<FriendDashboard> {
+  const { data, error } = await supabase.rpc('get_friend_dashboard', { friend_id: friendId })
+  if (error) {
+    throw error
+  }
+  return toFriendDashboard(data as FriendDashboardRpcResult)
 }

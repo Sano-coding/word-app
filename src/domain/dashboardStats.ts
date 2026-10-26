@@ -2,7 +2,13 @@ import type { MasterySnapshot, MasteryLevel, Tanchou, Word } from '@/types'
 
 export type MasteryCounts = Record<MasteryLevel, number>
 
-export function countWordsByMastery(words: Word[]): MasteryCounts {
+/** ダッシュボードの集計に必要な単語の状態だけを抜き出した型（フレンドのダッシュボードでは単語の本文を受け取らない） */
+export type WordStudyState = Pick<Word, 'masteryLevel' | 'flashcardStatus' | 'quizStatus'>
+
+/** ダッシュボードの集計に必要な単語帳の情報だけを抜き出した型 */
+export type TanchouSummary = Pick<Tanchou, 'name' | 'lastStudiedAt'>
+
+export function countWordsByMastery(words: Pick<Word, 'masteryLevel'>[]): MasteryCounts {
   const counts: MasteryCounts = { not_memorized: 0, partially_memorized: 0, memorized: 0 }
   for (const word of words) {
     counts[word.masteryLevel] += 1
@@ -15,7 +21,10 @@ export interface StudyStatusCounts {
   notShown: number
 }
 
-export function countWordsByStudyStatus(words: Word[], key: 'flashcardStatus' | 'quizStatus'): StudyStatusCounts {
+export function countWordsByStudyStatus(
+  words: Pick<Word, 'flashcardStatus' | 'quizStatus'>[],
+  key: 'flashcardStatus' | 'quizStatus',
+): StudyStatusCounts {
   let shown = 0
   let notShown = 0
   for (const word of words) {
@@ -25,8 +34,8 @@ export function countWordsByStudyStatus(words: Word[], key: 'flashcardStatus' | 
   return { shown, notShown }
 }
 
-export interface TanchouActivity {
-  tanchou: Tanchou
+export interface TanchouActivity<T extends TanchouSummary = Tanchou> {
+  tanchou: T
   shownCount: number
 }
 
@@ -34,8 +43,11 @@ export interface TanchouActivity {
  * 単語帳ごとの「出題済み単語数」（フラッシュカード＋4択クイズの合計）が最も多いものを返す。
  * 1件も出題されていない場合はnull。
  */
-export function findMostActiveTanchou(tanchous: Tanchou[], wordsByTanchou: Word[][]): TanchouActivity | null {
-  let best: TanchouActivity | null = null
+export function findMostActiveTanchou<T extends TanchouSummary>(
+  tanchous: T[],
+  wordsByTanchou: Pick<Word, 'flashcardStatus' | 'quizStatus'>[][],
+): TanchouActivity<T> | null {
+  let best: TanchouActivity<T> | null = null
   tanchous.forEach((tanchou, i) => {
     const words = wordsByTanchou[i] ?? []
     const shownCount = words.filter((w) => w.flashcardStatus === 'shown').length + words.filter((w) => w.quizStatus === 'shown').length
@@ -47,8 +59,8 @@ export function findMostActiveTanchou(tanchous: Tanchou[], wordsByTanchou: Word[
 }
 
 /** `lastStudiedAt` が最も新しい単語帳を返す。1件も学習記録が無い場合はnull。 */
-export function findMostRecentlyStudiedTanchou(tanchous: Tanchou[]): Tanchou | null {
-  const studied = tanchous.filter((t): t is Tanchou & { lastStudiedAt: string } => t.lastStudiedAt !== null)
+export function findMostRecentlyStudiedTanchou<T extends Pick<Tanchou, 'lastStudiedAt'>>(tanchous: T[]): T | null {
+  const studied = tanchous.filter((t): t is T & { lastStudiedAt: string } => t.lastStudiedAt !== null)
   if (studied.length === 0) return null
   return studied.reduce((latest, t) => (t.lastStudiedAt > latest.lastStudiedAt ? t : latest))
 }
@@ -85,6 +97,39 @@ export function mergeTodaySnapshot(
     return [...history.slice(0, -1), todaySnapshot]
   }
   return [...history, todaySnapshot]
+}
+
+export interface DashboardData {
+  counts: MasteryCounts
+  history: MasterySnapshot[]
+  flashcardStatus: StudyStatusCounts
+  quizStatus: StudyStatusCounts
+  mostActive: { tanchouName: string; shownCount: number } | null
+  mostRecent: { tanchouName: string; lastStudiedAt: string } | null
+}
+
+/**
+ * 単語帳・単語の状態・スナップショット履歴から、ダッシュボードに表示する集計値をまとめて作る。
+ * 自分のダッシュボードとフレンドのダッシュボードで同じ集計ロジックを使うための共通入口。
+ */
+export function buildDashboardData(
+  tanchous: TanchouSummary[],
+  wordsByTanchou: WordStudyState[][],
+  snapshots: MasterySnapshot[],
+  today: string,
+): DashboardData {
+  const words = wordsByTanchou.flat()
+  const counts = countWordsByMastery(words)
+  const active = findMostActiveTanchou(tanchous, wordsByTanchou)
+  const recent = findMostRecentlyStudiedTanchou(tanchous)
+  return {
+    counts,
+    history: mergeTodaySnapshot(snapshots, today, counts),
+    flashcardStatus: countWordsByStudyStatus(words, 'flashcardStatus'),
+    quizStatus: countWordsByStudyStatus(words, 'quizStatus'),
+    mostActive: active ? { tanchouName: active.tanchou.name, shownCount: active.shownCount } : null,
+    mostRecent: recent?.lastStudiedAt ? { tanchouName: recent.name, lastStudiedAt: recent.lastStudiedAt } : null,
+  }
 }
 
 export interface NiceYAxis {

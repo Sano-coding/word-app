@@ -1,14 +1,14 @@
 import { supabase } from '@/lib/supabaseClient'
 import type { MasterySnapshot } from '@/types'
 
-interface MasterySnapshotRow {
+export interface MasterySnapshotRow {
   snapshot_date: string
   not_memorized_count: number
   partially_memorized_count: number
   memorized_count: number
 }
 
-function toMasterySnapshot(row: MasterySnapshotRow): MasterySnapshot {
+export function toMasterySnapshot(row: MasterySnapshotRow): MasterySnapshot {
   return {
     date: row.snapshot_date,
     notMemorized: row.not_memorized_count,
